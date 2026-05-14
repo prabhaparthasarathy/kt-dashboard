@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KT Compliance Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface2: #f1efe8;
+    --border: rgba(0,0,0,0.1);
+    --border-strong: rgba(0,0,0,0.18);
+    --text: #1a1a18;
+    --text2: #5f5e5a;
+    --text3: #888780;
+    --green: #3B6D11; --green-bg: #EAF3DE;
+    --amber: #BA7517; --amber-bg: #FAEEDA;
+    --red: #A32D2D; --red-bg: #FCEBEB;
+    --blue: #185FA5; --blue-bg: #E6F1FB;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem;
+  }
+
+  .page { max-width: 1100px; margin: 0 auto; }
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.75rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 0.5px solid var(--border-strong);
+  }
+  .page-header h1 { font-size: 22px; font-weight: 600; letter-spacing: -0.3px; color: var(--text); margin-bottom: 4px; }
+  .page-header p { font-size: 13px; color: var(--text2); }
+  .as-of { font-size: 12px; color: var(--text3); background: var(--surface2); padding: 4px 12px; border-radius: 20px; border: 0.5px solid var(--border); white-space: nowrap; margin-top: 4px; }
+
+  .metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 1.25rem; }
+  .metric {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .metric::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .metric.green::before { background: var(--green); }
+  .metric.amber::before { background: var(--amber); }
+  .metric.red::before { background: #E24B4A; }
+  .metric.blue::before { background: var(--blue); }
+  .metric .m-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text3); margin-bottom: 8px; }
+  .metric .m-value { font-size: 32px; font-weight: 600; letter-spacing: -1px; line-height: 1; margin-bottom: 4px; }
+  .metric.green .m-value { color: var(--green); }
+  .metric.amber .m-value { color: var(--amber); }
+  .metric.red .m-value { color: #E24B4A; }
+  .metric.blue .m-value { color: var(--blue); }
+  .metric .m-sub { font-size: 12px; color: var(--text3); }
+
+  .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+  }
+  .card h3 { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .card .card-sub { font-size: 12px; color: var(--text3); margin-bottom: 14px; }
+  .chart-wrap { position: relative; width: 100%; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text2); }
+  .legend-sq { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+  table.kt { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
+  table.kt thead th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text3);
+    padding: 0 10px 10px;
+    border-bottom: 0.5px solid var(--border-strong);
+  }
+  table.kt tbody td {
+    padding: 9px 10px;
+    border-bottom: 0.5px solid var(--border);
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  table.kt tbody tr:last-child td { border-bottom: none; }
+  table.kt tbody tr:hover td { background: var(--surface2); }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-ns  { background: var(--red-bg); color: var(--red); }
+  .badge-ip  { background: var(--amber-bg); color: var(--amber); }
+  .badge-req { background: #EEEDFE; color: #3C3489; }
+  .badge-cmp { background: var(--green-bg); color: var(--green); }
+  .badge-nr  { background: var(--surface2); color: var(--text3); border: 0.5px solid var(--border); }
+
+  .score-bar { display: flex; align-items: center; gap: 8px; }
+  .score-track { flex: 1; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+  .score-fill { height: 100%; border-radius: 3px; }
+  .score-num { font-size: 12px; font-weight: 600; min-width: 30px; text-align: right; }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text3);
+    margin-bottom: 10px;
+    margin-top: 0.25rem;
+  }
+
+  @media (max-width: 780px) {
+    body { padding: 1rem; }
+    .metric-grid { grid-template-columns: 1fr 1fr; }
+    .charts-row { grid-template-columns: 1fr; }
+    .page-header { flex-direction: column; gap: 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="page-header">
+    <div>
+      <h1>KT Compliance Dashboard</h1>
+      <p>Knowledge transfer status — India PMs → US PMs &nbsp;·&nbsp; 69 product areas</p>
+    </div>
+    <div class="as-of">As of May 13, 2026</div>
+  </div>
+
+  <div class="section-label">Overview</div>
+  <div class="metric-grid">
+    <div class="metric green">
+      <div class="m-label">Completed</div>
+      <div class="m-value">10</div>
+      <div class="m-sub">14.5% · Avg 96% ready</div>
+    </div>
+    <div class="metric amber">
+      <div class="m-label">In Progress</div>
+      <div class="m-value">3</div>
+      <div class="m-sub">4.3% · Avg 80% ready</div>
+    </div>
+    <div class="metric red">
+      <div class="m-label">Not Started</div>
+      <div class="m-value">11</div>
+      <div class="m-sub">15.9% · Avg 16% ready</div>
+    </div>
+    <div class="metric blue">
+      <div class="m-label">Not Required</div>
+      <div class="m-value">36</div>
+      <div class="m-sub">52.2% · Avg 96% ready</div>
+    </div>
+  </div>
+
+  <div class="charts-row">
+    <div class="card">
+      <h3>Status distribution</h3>
+      <div class="card-sub">All 69 product areas</div>
+      <div class="legend">
+        <div class="legend-item"><span class="legend-sq" style="background:#185FA5"></span>Not Required (36)</div>
+        <div class="legend-item"><span class="legend-sq" style="background:#E24B4A"></span>Not Started (11)</div>
+        <div class="legend-item"><span class="legend-sq" style="background:#3B6D11"></span>Completed (10)</div>
+        <div class="legend-item"><span class="legend-sq" style="background:#888780"></span>Other (9)</div>
+        <div class="legend-item"><span class="legend-sq" style="background:#BA7517"></span>In Process (3)</div>
+      </div>
+      <div class="chart-wrap" style="height:200px;">
+        <canvas id="statusChart" role="img" aria-label="Donut chart: Not Required 36, Not Started 11, Completed 10, Other 9, In Process 3">Not Required: 36 · Not Started: 11 · Completed: 10 · Other: 9 · In Process: 3</canvas>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Avg. readiness score by status</h3>
+      <div class="card-sub">Higher is better · percentage</div>
+      <div class="chart-wrap" style="height:240px;">
+        <canvas id="readinessChart" role="img" aria-label="Horizontal bar: Completed 96%, In Process 80%, Not Required 96%, Not Started 16%">Completed: 96% · In Process: 80% · Not Required: 96% · Not Started: 16%</canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="charts-row">
+    <div class="card">
+      <h3>KT checklist completion</h3>
+      <div class="card-sub">Across tracked items only</div>
+      <div class="legend">
+        <div class="legend-item"><span class="legend-sq" style="background:#3B6D11"></span>Done</div>
+        <div class="legend-item"><span class="legend-sq" style="background:#E24B4A"></span>Pending / No</div>
+        <div class="legend-item"><span class="legend-sq" style="background:#888780"></span>Not required</div>
+      </div>
+      <div class="chart-wrap" style="height:200px;">
+        <canvas id="checklistChart" role="img" aria-label="Grouped bar: State Walkthrough, Shadowing, Reverse Demo, Receiver Signoff — done vs pending">KT checklist completion by activity.</canvas>
+      </div>
+    </div>
+    <div class="card">
+      <h3>India PM — items by status</h3>
+      <div class="card-sub">Top owners with open KT work</div>
+      <div class="legend">
+        <div class="legend-item"><span class="legend-sq" style="background:#3B6D11"></span>Completed</div>
+        <div class="legend-item"><span class="legend-sq" style="background:#BA7517"></span>In Process</div>
+        <div class="legend-item"><span class="legend-sq" style="background:#E24B4A"></span>Not Started</div>
+        <div class="legend-item"><span class="legend-sq" style="background:#185FA5"></span>Not Required</div>
+      </div>
+      <div class="chart-wrap" style="height:200px;">
+        <canvas id="ownerChart" role="img" aria-label="Stacked bar chart of KT items per India PM owner by status">KT items per India PM by status.</canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label" style="margin-top:0.5rem;">Items requiring action</div>
+  <div class="card">
+    <table class="kt">
+      <colgroup>
+        <col style="width:8%"><col style="width:13%"><col style="width:15%"><col style="width:13%"><col style="width:16%"><col style="width:35%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>Area</th><th>India PM</th><th>Receiving PM</th><th>Status</th><th>Readiness</th><th>Pending items</th>
+        </tr>
+      </thead>
+      <tbody id="actionTable"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+const actionItems = [
+  {area:'KS',owner:'Chintan',pm:'Jason*',status:'In Process',score:90,pending:'—'},
+  {area:'ID',owner:'Soumya',pm:'Michael / Debra',status:'Not Started',score:0,pending:'All'},
+  {area:'UT',owner:'Soumya',pm:'Michael / Debra',status:'Not Started',score:0,pending:'All'},
+  {area:'IA',owner:'Ankit',pm:'Fred',status:'Not Started',score:50,pending:'SIF Unity, backlog & future commitments'},
+  {area:'MT',owner:'Chintan',pm:'Turab / Jessica',status:'Not Started',score:20,pending:'Chintan handling independently'},
+  {area:'FL (esp)',owner:'Himanshu',pm:'—',status:'Not Started',score:null,pending:'—'},
+  {area:'NY',owner:'Himanshu',pm:'—',status:'Not Started',score:null,pending:'—'},
+  {area:'FL',owner:'Himanshu',pm:'Debra',status:'Not Started',score:0,pending:'—'},
+  {area:'MD',owner:'Rajesh (eSP)',pm:'Prashu',status:'In Process',score:80,pending:'Prashu gave to Rajesh, now coming back'},
+  {area:'IL',owner:'Rohan (eSP)',pm:'Jessica?',status:'Required',score:100,pending:'—'},
+  {area:'LA',owner:'Sivaprasad',pm:'Caron*',status:'Not Started',score:0,pending:'Everything'},
+  {area:'CT',owner:'Tehzeeb',pm:'Jessica',status:'Not Started',score:50,pending:'Backlog, recent development'},
+  {area:'IL',owner:'Tehzeeb',pm:'Jessica',status:'Not Started',score:0,pending:'—'},
+  {area:'IN',owner:'Himanshu',pm:'Caron',status:'In Process',score:70,pending:'—'},
+  {area:'NE',owner:'Chintan',pm:'Turab / Jessica',status:'Not Started',score:20,pending:'Chintan handling independently'},
+];
+
+const badgeClass = {'Not Started':'badge-ns','In Process':'badge-ip','Required':'badge-req','Completed':'badge-cmp','Not Required':'badge-nr'};
+const tbody = document.getElementById('actionTable');
+actionItems.forEach(r => {
+  const scoreNum = r.score !== null ? r.score : null;
+  const scoreColor = scoreNum === null ? '#888780' : scoreNum >= 70 ? '#3B6D11' : scoreNum >= 40 ? '#BA7517' : '#E24B4A';
+  const scoreFill = scoreNum !== null ? `<div class="score-bar"><div class="score-track"><div class="score-fill" style="width:${scoreNum}%;background:${scoreColor}"></div></div><span class="score-num" style="color:${scoreColor}">${scoreNum}%</span></div>` : '<span style="color:#888780;font-size:12px">—</span>';
+  tbody.innerHTML += `<tr>
+    <td><strong>${r.area}</strong></td>
+    <td>${r.owner}</td>
+    <td style="color:#5f5e5a">${r.pm}</td>
+    <td><span class="badge ${badgeClass[r.status]||'badge-nr'}">${r.status}</span></td>
+    <td>${scoreFill}</td>
+    <td style="color:#5f5e5a" title="${r.pending}">${r.pending}</td>
+  </tr>`;
+});
+
+new Chart(document.getElementById('statusChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Not Required','Not Started','Completed','Other','In Process'],
+    datasets: [{
+      data: [36,11,10,9,3],
+      backgroundColor: ['#185FA5','#E24B4A','#3B6D11','#888780','#BA7517'],
+      borderWidth: 3,
+      borderColor: '#ffffff',
+      hoverOffset: 4
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    cutout: '62%'
+  }
+});
+
+new Chart(document.getElementById('readinessChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Completed','In Process','Not Required','Not Started'],
+    datasets: [{
+      data: [96,80,96,16],
+      backgroundColor: ['#3B6D11','#BA7517','#185FA5','#E24B4A'],
+      borderRadius: 5,
+      barThickness: 26
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + ctx.raw + '%' } } },
+    scales: {
+      x: { min:0, max:110, ticks: { callback: v => v+'%', font:{size:11}, color:'#888780' }, grid: { color:'rgba(0,0,0,0.06)' } },
+      y: { ticks: { font:{size:12}, color:'#5f5e5a' }, grid: { display:false } }
+    }
+  }
+});
+
+new Chart(document.getElementById('checklistChart'), {
+  type: 'bar',
+  data: {
+    labels: ['State Walkthrough','Shadowing','Reverse Demo','Receiver Signoff'],
+    datasets: [
+      { label:'Done',        data:[5,5,2,0], backgroundColor:'#3B6D11', borderRadius:4, barThickness:20 },
+      { label:'Pending/No',  data:[2,4,4,4], backgroundColor:'#E24B4A', borderRadius:4, barThickness:20 },
+      { label:'Not required',data:[3,3,0,0], backgroundColor:'#888780', borderRadius:4, barThickness:20 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { font:{size:10}, color:'#888780', maxRotation:10 }, grid: { display:false } },
+      y: { ticks: { font:{size:11}, color:'#888780' }, grid: { color:'rgba(0,0,0,0.06)' } }
+    }
+  }
+});
+
+new Chart(document.getElementById('ownerChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Rohan(eSP)','Himanshu','Alka','Soumya','Chintan','Tehzeeb','Rajesh(eSP)','Sivaprasad','Ankit'],
+    datasets: [
+      { label:'Completed',    data:[2,0,1,0,0,0,1,2,0], backgroundColor:'#3B6D11', borderRadius:3, barThickness:16 },
+      { label:'In Process',   data:[0,1,0,0,1,0,1,0,0], backgroundColor:'#BA7517', borderRadius:3, barThickness:16 },
+      { label:'Not Started',  data:[0,3,0,2,2,2,0,1,1], backgroundColor:'#E24B4A', borderRadius:3, barThickness:16 },
+      { label:'Not Required', data:[1,1,4,0,0,1,2,0,2], backgroundColor:'#185FA5', borderRadius:3, barThickness:16 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { stacked:true, ticks: { font:{size:9}, color:'#888780', maxRotation:35 }, grid: { display:false } },
+      y: { stacked:true, ticks: { font:{size:11}, color:'#888780' }, grid: { color:'rgba(0,0,0,0.06)' } }
+    }
+  }
+});
+</script>
+</body>
+</html>
