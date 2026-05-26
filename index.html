@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KT Compliance Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script>
 /*!
  * Chart.js v4.5.1
@@ -22,436 +24,600 @@
 
 </script>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#f5f4f0;--surface:#fff;--surface2:#f1efe8;
-  --border:rgba(0,0,0,0.1);--border-strong:rgba(0,0,0,0.18);
-  --text:#1a1a18;--text2:#5f5e5a;--text3:#888780;
-  --green:#3B6D11;--green-bg:#EAF3DE;
-  --amber:#BA7517;--amber-bg:#FAEEDA;
-  --red:#A32D2D;--red-bg:#FCEBEB;
-  --blue:#185FA5;--blue-bg:#E6F1FB;
-  --purple:#3C3489;--purple-bg:#EEEDFE;
-  --teal:#0F766E;--teal-bg:#CCFBF1;
-  --gray:#888780;--gray-bg:#F1EFE8;
-  --radius:10px;
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #F8F7F4;
+  --surface: #FFFFFF;
+  --surface2: #F0EDE8;
+  --surface3: #E8E4DE;
+  --border: rgba(0,0,0,0.08);
+  --border-md: rgba(0,0,0,0.14);
+  --text: #18181B;
+  --text2: #52525B;
+  --text3: #A1A1AA;
+  --green: #3B6D11; --green-bg: #EAF3DE; --green-mid: #6DB33F;
+  --amber: #D97706; --amber-bg: #FEF3C7;
+  --red: #DC2626;   --red-bg: #FEE2E2;
+  --blue: #2563EB;  --blue-bg: #EFF6FF;
+  --teal: #0D9488;  --teal-bg: #CCFBF1;
+  --purple: #7C3AED;--purple-bg: #EDE9FE;
+  --gray: #6B7280;  --gray-bg: #F3F4F6;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06);
 }
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:2rem}
-.page{max-width:1200px;margin:0 auto}
-.page-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.75rem;padding-bottom:1.25rem;border-bottom:0.5px solid var(--border-strong)}
-.page-header h1{font-size:22px;font-weight:600;letter-spacing:-0.3px;margin-bottom:4px}
-.page-header p{font-size:13px;color:var(--text2)}
-.as-of{font-size:12px;color:var(--text3);background:var(--surface2);padding:4px 12px;border-radius:20px;border:0.5px solid var(--border);white-space:nowrap;margin-top:4px}
-.section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);margin-bottom:10px;margin-top:1.5rem;display:flex;align-items:center;gap:10px}
-.metric-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:1.25rem}
-.metric{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;position:relative;overflow:hidden;cursor:pointer;transition:box-shadow 0.15s,transform 0.15s}
-.metric:hover{box-shadow:0 2px 10px rgba(0,0,0,0.1);transform:translateY(-1px)}
-.metric.active{box-shadow:0 0 0 2px currentColor;}
-.metric::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
-.metric.c-green::before{background:var(--green)} .metric.c-green .m-value{color:var(--green)}
-.metric.c-amber::before{background:var(--amber)} .metric.c-amber .m-value{color:var(--amber)}
-.metric.c-red::before{background:#E24B4A} .metric.c-red .m-value{color:#E24B4A}
-.metric.c-blue::before{background:var(--blue)} .metric.c-blue .m-value{color:var(--blue)}
-.metric.c-purple::before{background:var(--purple)} .metric.c-purple .m-value{color:var(--purple)}
-.metric.c-teal::before{background:var(--teal)} .metric.c-teal .m-value{color:var(--teal)}
-.metric.c-gray::before{background:var(--gray)} .metric.c-gray .m-value{color:var(--gray)}
-.m-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);margin-bottom:6px}
-.m-value{font-size:28px;font-weight:600;letter-spacing:-1px;line-height:1;margin-bottom:3px}
-.m-sub{font-size:11px;color:var(--text3)}
-.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-.card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:18px 20px}
-.card h3{font-size:13px;font-weight:600;margin-bottom:4px}
-.card-sub{font-size:12px;color:var(--text3);margin-bottom:14px}
-.chart-wrap{position:relative;width:100%}
-.legend{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
-.legend-item{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text2)}
-.legend-sq{width:10px;height:10px;border-radius:2px;flex-shrink:0}
-/* Table */
-.table-wrap{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.table-toolbar{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:0.5px solid var(--border)}
-.table-toolbar-left{display:flex;align-items:center;gap:10px}
-.table-title{font-size:13px;font-weight:600}
-.filter-chip{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:none;background:var(--blue-bg);color:var(--blue)}
-.filter-chip .x{opacity:0.7;font-size:13px;line-height:1}
-.filter-chip:hover .x{opacity:1}
-.row-count{font-size:12px;color:var(--text3)}
-table.kt{width:100%;border-collapse:collapse;font-size:12.5px}
-table.kt thead th{text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.4px;color:var(--text3);padding:10px 12px;border-bottom:0.5px solid var(--border-strong);white-space:nowrap}
-table.kt tbody td{padding:9px 12px;border-bottom:0.5px solid var(--border);color:var(--text);vertical-align:middle}
-table.kt tbody tr:last-child td{border-bottom:none}
-table.kt tbody tr:hover td{background:var(--surface2)}
-.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
-.b-ns{background:var(--red-bg);color:var(--red)}
-.b-ip{background:var(--amber-bg);color:var(--amber)}
-.b-cmp{background:var(--green-bg);color:var(--green)}
-.b-nr{background:var(--surface2);color:var(--text3);border:0.5px solid var(--border)}
-.b-uskt{background:var(--teal-bg);color:var(--teal)}
-.b-cont{background:var(--purple-bg);color:var(--purple)}
-.b-unk{background:#f1efe8;color:#888780}
-.score-bar{display:flex;align-items:center;gap:7px;min-width:90px}
-.score-track{flex:1;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden}
-.score-fill{height:100%;border-radius:3px}
-.score-num{font-size:11px;font-weight:600;min-width:28px;text-align:right}
-.empty-msg{padding:32px;text-align:center;color:var(--text3);font-size:13px}
-.checklist-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:2px}
-.td-area{font-weight:600;white-space:nowrap}
-.td-trunc{max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2)}
-@media(max-width:900px){
-  body{padding:1rem}
-  .metric-grid{grid-template-columns:repeat(4,1fr)}
-  .charts-row{grid-template-columns:1fr}
-  .page-header{flex-direction:column;gap:10px}
+body {
+  font-family: 'DM Sans', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ── HEADER ── */
+.header {
+  background: var(--text);
+  color: #fff;
+  padding: 20px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.header-left h1 {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.4px;
+  margin-bottom: 3px;
+  color: #fff;
+}
+.header-left p { font-size: 13px; color: rgba(255,255,255,0.55); }
+.header-badge {
+  font-size: 11px;
+  font-weight: 500;
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.7);
+  padding: 4px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.15);
+  white-space: nowrap;
+}
+
+/* ── LAYOUT ── */
+.page { max-width: 1280px; margin: 0 auto; padding: 28px 28px 48px; }
+.section-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text3);
+  margin-bottom: 12px;
+  margin-top: 28px;
+}
+
+/* ── STAT CARDS ── */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+  overflow: hidden;
+}
+.stat-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.stat-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.stat-card.active { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.stat-card.active::after { opacity: 1; }
+.stat-card[data-s="Completed"]::after { background: var(--green); }
+.stat-card[data-s="In Process"]::after { background: var(--amber); }
+.stat-card[data-s="Not Started"]::after { background: var(--red); }
+.stat-card[data-s="Not Required"]::after { background: var(--blue); }
+.stat-card[data-s="USKT"]::after { background: var(--teal); }
+.stat-card[data-s="Continues"]::after { background: var(--purple); }
+.stat-card[data-s="Unknown"]::after { background: var(--gray); }
+.stat-card.active[data-s="Completed"] { border-color: var(--green); background: var(--green-bg); }
+.stat-card.active[data-s="In Process"] { border-color: var(--amber); background: var(--amber-bg); }
+.stat-card.active[data-s="Not Started"] { border-color: var(--red); background: var(--red-bg); }
+.stat-card.active[data-s="Not Required"] { border-color: var(--blue); background: var(--blue-bg); }
+.stat-card.active[data-s="USKT"] { border-color: var(--teal); background: var(--teal-bg); }
+.stat-card.active[data-s="Continues"] { border-color: var(--purple); background: var(--purple-bg); }
+.stat-card.active[data-s="Unknown"] { border-color: var(--gray); background: var(--gray-bg); }
+.stat-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text3); margin-bottom: 8px; }
+.stat-value { font-size: 30px; font-weight: 600; letter-spacing: -1px; line-height: 1; margin-bottom: 4px; }
+.stat-card[data-s="Completed"] .stat-value { color: var(--green); }
+.stat-card[data-s="In Process"] .stat-value { color: var(--amber); }
+.stat-card[data-s="Not Started"] .stat-value { color: var(--red); }
+.stat-card[data-s="Not Required"] .stat-value { color: var(--blue); }
+.stat-card[data-s="USKT"] .stat-value { color: var(--teal); }
+.stat-card[data-s="Continues"] .stat-value { color: var(--purple); }
+.stat-card[data-s="Unknown"] .stat-value { color: var(--gray); }
+.stat-sub { font-size: 11px; color: var(--text3); }
+
+/* ── CHARTS ROW ── */
+.charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.chart-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  box-shadow: var(--shadow);
+}
+.chart-card h3 { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+.chart-sub { font-size: 12px; color: var(--text3); margin-bottom: 14px; }
+.chart-wrap { position: relative; width: 100%; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.legend-dot { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text2); }
+.legend-dot span { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+/* ── TABLE SECTION ── */
+.table-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.table-header-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.table-header h3 { font-size: 14px; font-weight: 600; }
+.filter-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px 3px 12px;
+  background: var(--blue-bg);
+  color: var(--blue);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid rgba(37,99,235,0.2);
+}
+.filter-badge button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--blue);
+  font-size: 15px;
+  line-height: 1;
+  padding: 0 0 0 2px;
+  opacity: 0.6;
+  transition: opacity 0.1s;
+}
+.filter-badge button:hover { opacity: 1; }
+.row-count { font-size: 12px; color: var(--text3); font-variant-numeric: tabular-nums; }
+
+table.kt {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  table-layout: fixed;
+}
+table.kt thead th {
+  text-align: left;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text3);
+  padding: 10px 14px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border-md);
+  white-space: nowrap;
+}
+table.kt tbody td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+table.kt tbody tr:last-child td { border-bottom: none; }
+table.kt tbody tr:hover td { background: var(--bg); }
+
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  font-family: 'DM Mono', monospace;
+}
+.b-Completed   { background: var(--green-bg); color: var(--green); }
+.b-In-Process  { background: var(--amber-bg); color: var(--amber); }
+.b-Not-Started { background: var(--red-bg);   color: var(--red); }
+.b-Not-Required{ background: var(--blue-bg);  color: var(--blue); }
+.b-USKT        { background: var(--teal-bg);  color: var(--teal); }
+.b-Continues   { background: var(--purple-bg);color: var(--purple); }
+.b-Unknown     { background: var(--gray-bg);  color: var(--gray); }
+
+.score-wrap { display: flex; align-items: center; gap: 8px; }
+.score-bar { flex: 1; height: 5px; background: var(--surface2); border-radius: 3px; overflow: hidden; min-width: 40px; }
+.score-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+.score-num { font-size: 11px; font-weight: 600; font-family: 'DM Mono', monospace; min-width: 28px; text-align: right; }
+
+.dot-yes { color: #3B6D11; font-weight: 700; }
+.dot-no  { color: #DC2626; font-weight: 700; }
+.dot-nr  { color: var(--text3); font-size: 10px; }
+.dot-na  { color: #D1D5DB; }
+
+.empty-state {
+  padding: 48px;
+  text-align: center;
+  color: var(--text3);
+  font-size: 13px;
+}
+
+@media (max-width: 900px) {
+  .page { padding: 16px; }
+  .stat-grid { grid-template-columns: repeat(4, 1fr); }
+  .charts-row { grid-template-columns: 1fr; }
 }
 </style>
 </head>
 <body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>KT Compliance Dashboard</h1>
+    <p>Knowledge transfer status &mdash; India PMs &rarr; US PMs</p>
+  </div>
+  <div class="header-badge">As of May 2026 &nbsp;&middot;&nbsp; 69 product areas</div>
+</div>
+
 <div class="page">
 
-<div class="page-header">
-  <div>
-    <h1>KT Compliance Dashboard</h1>
-    <p>Knowledge transfer status — India PMs → US PMs &nbsp;·&nbsp; 69 product areas</p>
-  </div>
-  <div class="as-of">As of May 13, 2026</div>
-</div>
-
-<div class="section-label">Overview &nbsp;<span style="font-size:11px;font-weight:400;color:var(--text3);text-transform:none;letter-spacing:0">Click a card to filter the item list</span></div>
-<div class="metric-grid" id="metricGrid">
-  <div class="metric c-green" data-status="Completed">
-    <div class="m-label">Completed</div>
-    <div class="m-value" id="cnt-Completed">10</div>
-    <div class="m-sub">Avg 96% ready</div>
-  </div>
-  <div class="metric c-amber" data-status="In Process">
-    <div class="m-label">In Process</div>
-    <div class="m-value" id="cnt-In Process">3</div>
-    <div class="m-sub">Avg 80% ready</div>
-  </div>
-  <div class="metric c-red" data-status="Not Started">
-    <div class="m-label">Not Started</div>
-    <div class="m-value" id="cnt-Not Started">13</div>
-    <div class="m-sub">Needs attention</div>
-  </div>
-  <div class="metric c-blue" data-status="Not Required">
-    <div class="m-label">Not Required</div>
-    <div class="m-value" id="cnt-Not Required">30</div>
-    <div class="m-sub">No KT needed</div>
-  </div>
-  <div class="metric c-teal" data-status="USKT">
-    <div class="m-label">USKT</div>
-    <div class="m-value" id="cnt-USKT">5</div>
-    <div class="m-sub">US-owned KT</div>
-  </div>
-  <div class="metric c-purple" data-status="Continues">
-    <div class="m-label">Continues</div>
-    <div class="m-value" id="cnt-Continues">4</div>
-    <div class="m-sub">Ongoing</div>
-  </div>
-  <div class="metric c-gray" data-status="Unknown">
-    <div class="m-label">Unknown</div>
-    <div class="m-value" id="cnt-Unknown">4</div>
-    <div class="m-sub">TBD</div>
-  </div>
-</div>
-
-<div class="charts-row">
-  <div class="card">
-    <h3>Status distribution</h3>
-    <div class="card-sub">All 69 product areas — click a slice to filter</div>
-    <div class="legend">
-      <div class="legend-item"><span class="legend-sq" style="background:#3B6D11"></span>Completed</div>
-      <div class="legend-item"><span class="legend-sq" style="background:#BA7517"></span>In Process</div>
-      <div class="legend-item"><span class="legend-sq" style="background:#E24B4A"></span>Not Started</div>
-      <div class="legend-item"><span class="legend-sq" style="background:#185FA5"></span>Not Required</div>
-      <div class="legend-item"><span class="legend-sq" style="background:#0F766E"></span>USKT</div>
-      <div class="legend-item"><span class="legend-sq" style="background:#3C3489"></span>Continues</div>
-      <div class="legend-item"><span class="legend-sq" style="background:#888780"></span>Unknown</div>
+  <div class="section-title">Overview</div>
+  <div class="stat-grid" id="statGrid">
+    <div class="stat-card" data-s="Completed">
+      <div class="stat-label">Completed</div>
+      <div class="stat-value">11</div>
+      <div class="stat-sub">Avg 96% ready</div>
     </div>
-    <div class="chart-wrap" style="height:210px"><canvas id="statusChart"></canvas></div>
-  </div>
-  <div class="card">
-    <h3>India PM — KT items by status</h3>
-    <div class="card-sub">Stacked by status across all owners</div>
-    <div class="chart-wrap" style="height:260px"><canvas id="ownerChart"></canvas></div>
-  </div>
-</div>
-
-<div class="charts-row">
-  <div class="card">
-    <h3>Avg. readiness score by status</h3>
-    <div class="card-sub">Where scores are available</div>
-    <div class="chart-wrap" style="height:200px"><canvas id="readinessChart"></canvas></div>
-  </div>
-  <div class="card">
-    <h3>KT checklist completion</h3>
-    <div class="card-sub">State Walkthrough · Shadowing · Reverse Demo · Receiver Signoff</div>
-    <div class="legend">
-      <div class="legend-item"><span class="legend-sq" style="background:#3B6D11"></span>Done/Yes</div>
-      <div class="legend-item"><span class="legend-sq" style="background:#E24B4A"></span>No/Pending</div>
-      <div class="legend-item"><span class="legend-sq" style="background:#888780"></span>Not required</div>
+    <div class="stat-card" data-s="In Process">
+      <div class="stat-label">In Process</div>
+      <div class="stat-value">2</div>
+      <div class="stat-sub">Avg 80% ready</div>
     </div>
-    <div class="chart-wrap" style="height:170px"><canvas id="checklistChart"></canvas></div>
-  </div>
-</div>
-
-<div class="section-label" style="margin-top:0.5rem">
-  Item List
-</div>
-<div class="table-wrap">
-  <div class="table-toolbar">
-    <div class="table-toolbar-left">
-      <span class="table-title">All Items</span>
-      <button id="filterChip" class="filter-chip" style="display:none" onclick="clearFilter()">
-        <span id="chipLabel"></span><span class="x">✕</span>
-      </button>
+    <div class="stat-card" data-s="Not Started">
+      <div class="stat-label">Not Started</div>
+      <div class="stat-value">12</div>
+      <div class="stat-sub">Avg 28% ready</div>
     </div>
-    <span class="row-count" id="rowCount">69 items</span>
+    <div class="stat-card" data-s="Not Required">
+      <div class="stat-label">Not Required</div>
+      <div class="stat-value">30</div>
+      <div class="stat-sub">Avg 94% ready</div>
+    </div>
+    <div class="stat-card" data-s="USKT">
+      <div class="stat-label">USKT</div>
+      <div class="stat-value">5</div>
+      <div class="stat-sub">Avg 100% ready</div>
+    </div>
+    <div class="stat-card" data-s="Continues">
+      <div class="stat-label">Continues</div>
+      <div class="stat-value">4</div>
+      <div class="stat-sub">Avg —% ready</div>
+    </div>
+    <div class="stat-card" data-s="Unknown">
+      <div class="stat-label">Unknown</div>
+      <div class="stat-value">5</div>
+      <div class="stat-sub">Avg 100% ready</div>
+    </div>
   </div>
-  <div style="overflow-x:auto">
-    <table class="kt">
-      <colgroup>
-        <col style="width:7%"><col style="width:11%"><col style="width:12%"><col style="width:10%"><col style="width:9%"><col style="width:9%"><col style="width:8%"><col style="width:8%"><col style="width:8%"><col style="width:18%">
-      </colgroup>
-      <thead>
-        <tr>
-          <th>Area</th>
-          <th>India PM</th>
-          <th>Receiving PM</th>
-          <th>Status</th>
-          <th>Readiness</th>
-          <th>Last WD</th>
-          <th>SW</th>
-          <th>Shadow</th>
-          <th>Signoff</th>
-          <th>Pending / Notes</th>
-        </tr>
-      </thead>
-      <tbody id="itemTable"></tbody>
-    </table>
-    <div class="empty-msg" id="emptyMsg" style="display:none">No items match this filter.</div>
+
+  <div class="charts-row">
+    <div class="chart-card">
+      <h3>Status Distribution</h3>
+      <div class="chart-sub">All 69 product areas &middot; Click a slice to filter</div>
+      <div class="legend" id="donutLegend"></div>
+      <div class="chart-wrap" style="height:220px"><canvas id="donutChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Avg. Readiness Score by Status</h3>
+      <div class="chart-sub">Percentage &mdash; higher is better</div>
+      <div class="chart-wrap" style="height:260px"><canvas id="readinessChart"></canvas></div>
+    </div>
   </div>
-</div>
+
+  <div class="charts-row">
+    <div class="chart-card">
+      <h3>KT Checklist Completion</h3>
+      <div class="chart-sub">State Walkthrough &middot; Shadowing &middot; Reverse Demo &middot; Receiver Signoff</div>
+      <div class="legend">
+        <div class="legend-dot"><span style="background:#3B6D11"></span>Done / Yes</div>
+        <div class="legend-dot"><span style="background:#DC2626"></span>No / Pending</div>
+        <div class="legend-dot"><span style="background:#A1A1AA"></span>Not Required</div>
+      </div>
+      <div class="chart-wrap" style="height:190px"><canvas id="checklistChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>India PM &mdash; Items by Status</h3>
+      <div class="chart-sub">Stacked breakdown per owner</div>
+      <div class="chart-wrap" style="height:240px"><canvas id="ownerChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="section-title" style="margin-top:16px">Item List</div>
+  <div class="table-card">
+    <div class="table-header">
+      <div class="table-header-left">
+        <h3>All Items</h3>
+        <div id="filterBadge" style="display:none" class="filter-badge">
+          <span id="filterLabel"></span>
+          <button onclick="clearFilter()" title="Clear filter">&times;</button>
+        </div>
+      </div>
+      <span class="row-count" id="rowCount">69 items</span>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="kt">
+        <colgroup>
+          <col style="width:7%"><col style="width:11%"><col style="width:12%"><col style="width:10%">
+          <col style="width:9%"><col style="width:8%"><col style="width:7%"><col style="width:7%">
+          <col style="width:7%"><col style="width:22%">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Area</th><th>India PM</th><th>Receiving PM</th><th>Status</th>
+            <th>Readiness</th><th>Last WD</th><th>SW</th><th>Shadow</th>
+            <th>Signoff</th><th>Pending / Notes</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+      <div id="emptyState" class="empty-state" style="display:none">No items match this filter.</div>
+    </div>
+  </div>
 
 </div>
+
 <script>
-const DATA = [{"area": "MA", "owner": "chhaya", "pm": "Turab/NewHire", "status": "USKT", "score": 100.0, "lwd": "2026-12-31", "pending": "", "risks": "Sif Unity parellal coming up.", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MI Ed-fi", "owner": "", "pm": "ShanNita*", "status": "Not Required", "score": 100.0, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MN ed-fi", "owner": "", "pm": "ShanNita/NewHire", "status": "USKT", "score": 100.0, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "BC", "owner": "", "pm": "Shereen", "status": "Not Required", "score": 100.0, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "AB", "owner": "Tehzeeb", "pm": "Jessica", "status": "Not Required", "score": 80.0, "lwd": "", "pending": "Conformance , Current backlog, Engineering meetings", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "KS", "owner": "Chintan", "pm": "Jason*", "status": "In Process", "score": 90.0, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "Yes", "shadow": "Yes", "rd": "", "signoff": ""}, {"area": "SK", "owner": "", "pm": "Shereen", "status": "Not Required", "score": 100.0, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NJ", "owner": "Alka", "pm": "ShanNita", "status": "Not Required", "score": NaN, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "WI Ed-fi", "owner": "", "pm": "ShanNita/NewHire", "status": "USKT", "score": 100.0, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "WY", "owner": "NA / Turab", "pm": "Jason*", "status": "Unknown", "score": 100.0, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "Yes", "shadow": "Yes", "rd": "", "signoff": ""}, {"area": "GA", "owner": "Prabha", "pm": "Vette *", "status": "Not Required", "score": 90.0, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MO", "owner": "Anuj", "pm": "Jessica / Turab", "status": "Not Required", "score": 100.0, "lwd": "2026-06-12", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "CEDs", "owner": "Soumya", "pm": "Ben", "status": "Continues", "score": NaN, "lwd": "", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MB", "owner": "", "pm": "Shereen", "status": "Not Required", "score": 100.0, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "SIF, SIF Unity", "owner": "Soumya", "pm": "Ben", "status": "Continues", "score": NaN, "lwd": "", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "VA", "owner": "Alka", "pm": "ShanNita", "status": "Not Required", "score": NaN, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NM", "owner": "", "pm": "Eric ->Michael", "status": "USKT", "score": 100.0, "lwd": "2026-12-31", "pending": "Eric -> Micheal", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "OK", "owner": "Anuj", "pm": "Turab/ NewHire", "status": "USKT", "score": 100.0, "lwd": "2026-06-12", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "VT", "owner": "Ajish", "pm": "Vette/Newhire", "status": "Not Started", "score": 90.0, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "risks": "", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "PA", "owner": "Alka", "pm": "ShanNita", "status": "Not Required", "score": NaN, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "ID", "owner": "Soumya", "pm": "Michael", "status": "Not Started", "score": 0.0, "lwd": "", "pending": "All", "risks": "", "sw": "No", "shadow": "No", "rd": "No", "signoff": "No"}, {"area": "UDC", "owner": "Tehzeeb", "pm": "", "status": "Continues", "score": NaN, "lwd": "", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "TX", "owner": "Rajesh (eSP)", "pm": "Fred", "status": "Not Required", "score": 90.0, "lwd": "2026-07-03", "pending": "Had a discussion with Debra! MD will be taken by Prashu and Debra and PA will be taken by Fred. Have a sync up call on 18th May to discuss. In a nutshell KT not required.", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "UT", "owner": "Soumya", "pm": "Michael", "status": "Not Started", "score": 0.0, "lwd": "", "pending": "All", "risks": "Utah backpack live date is end of May and is at risk", "sw": "No", "shadow": "No", "rd": "No", "signoff": "No"}, {"area": "MS", "owner": "Anuj", "pm": "Jessica/Caron*", "status": "Not Required", "score": 100.0, "lwd": "2026-06-12", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "ON", "owner": "", "pm": "Shereen", "status": "Not Required", "score": 100.0, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MD", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100.0, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MN", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100.0, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "ME", "owner": "Alka", "pm": "ShanNita", "status": "Not Required", "score": NaN, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "IA", "owner": "Ankit", "pm": "Fred", "status": "Not Started", "score": 50.0, "lwd": "2026-12-31", "pending": "Sif Unity, IA current backlog and future commitments", "risks": "Sif Unity parellal coming up.", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "ND", "owner": "Ankit", "pm": "Fred", "status": "Not Required", "score": NaN, "lwd": "2026-12-31", "pending": "", "risks": "End of support from June -26", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "MT", "owner": "Chintan", "pm": "Michael", "status": "Not Started", "score": 20.0, "lwd": "2026-12-31", "pending": "Chintan is handling this independently", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "FL (esp )", "owner": "Himanshu", "pm": "", "status": "Not Started", "score": NaN, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NY", "owner": "Himanshu", "pm": "Shereen/NewHire", "status": "Not Started", "score": NaN, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "CA", "owner": "Rohan (eSP)", "pm": "Prashu", "status": "Completed", "score": 100.0, "lwd": "2026-12-31", "pending": "Prashu gave this to Rohan few months back and its given back.", "risks": "", "sw": "Done", "shadow": "Done", "rd": "", "signoff": "Done"}, {"area": "FL", "owner": "Himanshu", "pm": "Debra", "status": "Not Started", "score": 0.0, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MD", "owner": "Rajesh (eSP)", "pm": "Prashu", "status": "In Process", "score": 80.0, "lwd": "2026-12-31", "pending": "Prashu gave this to Rajesh few months back and its now coming back", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NJ", "owner": "Rajesh (eSP)", "pm": "Prashu", "status": "Completed", "score": 100.0, "lwd": "2026-12-31", "pending": "Prashu gave this to Rajesh few months back and its now coming back", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NY", "owner": "Rohan", "pm": "Prashu", "status": "Completed", "score": 100.0, "lwd": "2026-12-31", "pending": "Prashu gave this to Rohan few months back and its given back.", "risks": "", "sw": "Done", "shadow": "Done", "rd": "", "signoff": "Done"}, {"area": "OR", "owner": "Rohan (eSP)", "pm": "Prashu", "status": "Completed", "score": 100.0, "lwd": "2026-12-31", "pending": "Prashu Already handling OR state since Feb 2026", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "PA", "owner": "Rajesh (eSP)", "pm": "Fred", "status": "Not Required", "score": 80.0, "lwd": "2026-07-03", "pending": "In Progress", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "CRDC", "owner": "Rohan (eSP)", "pm": "", "status": "Unknown", "score": NaN, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "IL", "owner": "Rohan (eSP)", "pm": "New Hire", "status": "Not Started", "score": 100.0, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MA", "owner": "Rohan (eSP)", "pm": "", "status": "Not Required", "score": NaN, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "OH", "owner": "Rohan (eSP)", "pm": "", "status": "Unknown", "score": NaN, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "VA", "owner": "Rohan (eSP)", "pm": "", "status": "Unknown", "score": NaN, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "WA", "owner": "Rohan (eSP)", "pm": "", "status": "Not Required", "score": NaN, "lwd": "2026-12-31", "pending": "Only till June 26", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "LA", "owner": "Sivaprasad", "pm": "Caron*", "status": "Not Started", "score": 0.0, "lwd": "2026-12-31", "pending": "Everything", "risks": "", "sw": "", "shadow": "No", "rd": "No", "signoff": "No"}, {"area": "WA", "owner": "Sivaprasad", "pm": "Dan*", "status": "Completed", "score": 100.0, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "Done", "shadow": "Done", "rd": "Done", "signoff": ""}, {"area": "CO", "owner": "Smitha", "pm": "Jason*", "status": "Completed", "score": 100.0, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "Done", "shadow": "Done", "rd": "Done", "signoff": ""}, {"area": "CT", "owner": "Tehzeeb", "pm": "Jessica", "status": "Not Started", "score": 50.0, "lwd": "", "pending": "Backlog\nRecent development", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "IL", "owner": "Tehzeeb", "pm": "Jessica", "status": "Not Started", "score": 0.0, "lwd": "", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "OR", "owner": "Prashu", "pm": "Dan*", "status": "Completed", "score": 100.0, "lwd": "", "pending": "", "risks": "", "sw": "Done", "shadow": "Done", "rd": "", "signoff": ""}, {"area": "AK", "owner": "Alka", "pm": "Dan*", "status": "Completed", "score": 100.0, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "Done", "shadow": "Done", "rd": "", "signoff": ""}, {"area": "MI", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100.0, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NH", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100.0, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "OH", "owner": "", "pm": "Meta", "status": "Not Required", "score": 100.0, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "RI", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100.0, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "WI", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100.0, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "AZ", "owner": "Prashu", "pm": "Dan*", "status": "Completed", "score": 100.0, "lwd": "", "pending": "", "risks": "", "sw": "Done", "shadow": "Done", "rd": "", "signoff": ""}, {"area": "IN", "owner": "Himanshu", "pm": "Caron*", "status": "In Process", "score": 70.0, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NE", "owner": "Chintan", "pm": "Turab/ Caron*", "status": "Not Started", "score": 20.0, "lwd": "2026-12-31", "pending": "Chintan is handling this independently", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "CA", "owner": "Sivaprasad", "pm": "Jason*", "status": "Completed", "score": 60.0, "lwd": "2026-12-31", "pending": "Day  to Day Backlog management and sprint planning. Customer Introduction", "risks": "", "sw": "Yes", "shadow": "No", "rd": "No", "signoff": "No"}, {"area": "AL", "owner": "Smitha", "pm": "Debra", "status": "Not Required", "score": 80.0, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "FL (SIS)", "owner": "Himanshu", "pm": "Debra", "status": "Not Required", "score": NaN, "lwd": "2026-12-31", "pending": "Closure meeting  with current / pending backlog", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "SC", "owner": "Ajish", "pm": "Vette", "status": "Not Required", "score": 90.0, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "risks": "", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "TN", "owner": "Ajish", "pm": "Vette", "status": "Not Required", "score": 90.0, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "risks": "", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "TX", "owner": "Ankit", "pm": "Fred", "status": "Not Required", "score": 80.0, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "risks": "26-27 Requirements", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "Ed-fi, DEX", "owner": "Soumya", "pm": "Ben", "status": "Continues", "score": NaN, "lwd": "", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}];
+var ALL_DATA = [{"area": "MA", "owner": "Chhaya", "pm": "Turab/NewHire", "status": "USKT", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MI Ed-Fi", "owner": "", "pm": "Turab/NewHire", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MN Ed-Fi", "owner": "", "pm": "Turab/NewHire", "status": "USKT", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "BC", "owner": "", "pm": "Shereen", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "AB", "owner": "Tehzeeb", "pm": "Jessica", "status": "Not Required", "score": 80, "lwd": "", "pending": "Conformance , Current backlog, Engineering meetings", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "KS", "owner": "Chintan", "pm": "Jason*", "status": "In Process", "score": 90, "lwd": "2026-12-31", "pending": "", "sw": "Yes", "shadow": "Yes", "rd": "", "signoff": ""}, {"area": "SK", "owner": "", "pm": "Shereen", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NJ", "owner": "Alka", "pm": "ShanNita", "status": "Not Required", "score": null, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "WI Ed-Fi", "owner": "", "pm": "Turab/NewHire", "status": "USKT", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "WY", "owner": "NA / Turab", "pm": "Jason*", "status": "Unknown", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "Yes", "shadow": "Yes", "rd": "", "signoff": ""}, {"area": "GA", "owner": "Prabha", "pm": "Vette *", "status": "Not Required", "score": 90, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MO", "owner": "Anuj", "pm": "Jessica / Turab", "status": "Not Required", "score": 100, "lwd": "2026-06-12", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "CEDS", "owner": "Soumya", "pm": "Ben", "status": "Continues", "score": null, "lwd": "", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MB", "owner": "", "pm": "Shereen", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "SIF, SIF Unity", "owner": "Soumya", "pm": "Ben", "status": "Continues", "score": null, "lwd": "", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "VA", "owner": "Alka", "pm": "ShanNita", "status": "Not Required", "score": null, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NM", "owner": "", "pm": "Eric ->Michael", "status": "USKT", "score": 100, "lwd": "2026-12-31", "pending": "Eric -> Micheal", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "OK", "owner": "Anuj", "pm": "Turab/NewHire", "status": "USKT", "score": 100, "lwd": "2026-06-12", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "VT", "owner": "Ajish", "pm": "Vette/Newhire", "status": "Not Started", "score": 90, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "PA", "owner": "Alka", "pm": "ShanNita", "status": "Not Required", "score": null, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "ID", "owner": "Soumya", "pm": "Michael", "status": "Not Started", "score": 0, "lwd": "", "pending": "All", "sw": "No", "shadow": "No", "rd": "No", "signoff": "No"}, {"area": "UDC", "owner": "Tehzeeb", "pm": "", "status": "Continues", "score": null, "lwd": "", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "TX(esp)", "owner": "Rajesh (eSP)", "pm": "Fred", "status": "Not Required", "score": 90, "lwd": "2026-07-03", "pending": "Had a discussion with Debra! MD will be taken by Prashu and Debra and PA will be taken by Fred. Have a sync up call on 18th May to discuss. In a nutshell KT not required.", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "UT", "owner": "Soumya", "pm": "Michael", "status": "Not Started", "score": 0, "lwd": "", "pending": "All", "sw": "No", "shadow": "No", "rd": "No", "signoff": "No"}, {"area": "MS", "owner": "Anuj", "pm": "Jessica/Caron*", "status": "Not Required", "score": 100, "lwd": "2026-06-12", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "ON", "owner": "", "pm": "Shereen", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MD", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MN", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "ME", "owner": "Alka", "pm": "ShanNita", "status": "Not Required", "score": null, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "IA", "owner": "Ankit", "pm": "Fred/Newhire", "status": "Not Required", "score": 70, "lwd": "2026-12-31", "pending": "Sif Unity, IA current backlog and future commitments", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "ND", "owner": "Ankit", "pm": "Fred", "status": "Not Required", "score": null, "lwd": "2026-12-31", "pending": "", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "MT", "owner": "Chintan", "pm": "Michael", "status": "Not Started", "score": 20, "lwd": "2026-12-31", "pending": "Chintan is handling this independently", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "FL (esp )", "owner": "Himanshu", "pm": "", "status": "Not Started", "score": null, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NY", "owner": "Himanshu", "pm": "Shereen/NewHire", "status": "Not Started", "score": null, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "CA(esp)", "owner": "Rohan (eSP)", "pm": "Prashu", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "Prashu gave this to Rohan few months back and its given back.", "sw": "Done", "shadow": "Done", "rd": "", "signoff": "Done"}, {"area": "FL", "owner": "Himanshu", "pm": "Debra", "status": "Not Started", "score": 0, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MD(esp)", "owner": "Rajesh (eSP)", "pm": "Prashu", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "completed", "sw": "", "shadow": "", "rd": "", "signoff": "Done"}, {"area": "NJ(esp)", "owner": "Rajesh (eSP)", "pm": "Prashu", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "Prashu gave this to Rajesh few months back and its now coming back", "sw": "", "shadow": "", "rd": "", "signoff": "Done"}, {"area": "NY", "owner": "Rohan", "pm": "Prashu", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "Prashu gave this to Rohan few months back and its given back.", "sw": "Done", "shadow": "Done", "rd": "", "signoff": "Done"}, {"area": "OR", "owner": "Rohan (eSP)", "pm": "Prashu", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "Prashu Already handling OR state since Feb 2026", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "PA", "owner": "Rajesh (eSP)", "pm": "Fred", "status": "Not Required", "score": 100, "lwd": "2026-07-03", "pending": "completed", "sw": "", "shadow": "", "rd": "", "signoff": "Done"}, {"area": "CRDC", "owner": "Rohan (eSP)", "pm": "", "status": "Unknown", "score": null, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "IL(esp)", "owner": "Rohan (eSP)", "pm": "New Hire", "status": "Not Started", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MA(esp)", "owner": "Rohan (eSP)", "pm": "", "status": "Unknown", "score": null, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "OH(esp)", "owner": "Rohan (eSP)", "pm": "", "status": "Unknown", "score": null, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "VA(esp)", "owner": "Rohan (eSP)", "pm": "", "status": "Unknown", "score": null, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "WA(esp)", "owner": "Rohan (eSP)", "pm": "", "status": "Not Required", "score": null, "lwd": "2026-12-31", "pending": "Only till June 26", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "LA", "owner": "Sivaprasad", "pm": "Caron*", "status": "Not Started", "score": 0, "lwd": "2026-12-31", "pending": "Everything", "sw": "", "shadow": "No", "rd": "No", "signoff": "No"}, {"area": "WA", "owner": "Sivaprasad", "pm": "Dan*", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "Done", "shadow": "Done", "rd": "Done", "signoff": ""}, {"area": "CO", "owner": "Smitha", "pm": "Jason*", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "Done", "shadow": "Done", "rd": "Done", "signoff": ""}, {"area": "CT", "owner": "Tehzeeb", "pm": "Jessica", "status": "Not Started", "score": 50, "lwd": "", "pending": "Backlog\nRecent development", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "IL", "owner": "Tehzeeb", "pm": "Jessica", "status": "Not Started", "score": 0, "lwd": "", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "OR", "owner": "Prashu", "pm": "Dan*", "status": "Completed", "score": 100, "lwd": "", "pending": "", "sw": "Done", "shadow": "Done", "rd": "", "signoff": ""}, {"area": "AK", "owner": "Alka", "pm": "Dan*", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "Done", "shadow": "Done", "rd": "", "signoff": ""}, {"area": "MI", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NH", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "OH", "owner": "", "pm": "Meta", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "RI", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "WI", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "AZ", "owner": "Prashu", "pm": "Dan*", "status": "Completed", "score": 100, "lwd": "", "pending": "", "sw": "Done", "shadow": "Done", "rd": "", "signoff": ""}, {"area": "IN", "owner": "Himanshu", "pm": "Caron*", "status": "In Process", "score": 70, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NE", "owner": "Chintan", "pm": "Turab/ Caron*", "status": "Not Started", "score": 20, "lwd": "2026-12-31", "pending": "Chintan is handling this independently", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "CA", "owner": "Sivaprasad", "pm": "Jason*", "status": "Completed", "score": 60, "lwd": "2026-12-31", "pending": "Day  to Day Backlog management and sprint planning. Customer Introduction", "sw": "Yes", "shadow": "No", "rd": "No", "signoff": "No"}, {"area": "AL", "owner": "Smitha", "pm": "Debra", "status": "Not Required", "score": 80, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "FL (SIS)", "owner": "Himanshu", "pm": "Debra", "status": "Not Required", "score": null, "lwd": "2026-12-31", "pending": "Closure meeting  with current / pending backlog", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "SC", "owner": "Ajish", "pm": "Vette", "status": "Not Required", "score": 90, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "TN", "owner": "Ajish", "pm": "Vette", "status": "Not Required", "score": 90, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "TX", "owner": "Ankit", "pm": "Fred", "status": "Not Required", "score": 80, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "Ed-fi, DEX", "owner": "Soumya", "pm": "Ben", "status": "Continues", "score": null, "lwd": "", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}];
+var META     = {"status_counts": {"USKT": 5, "Not Required": 30, "In Process": 2, "Unknown": 5, "Continues": 4, "Not Started": 12, "Completed": 11}, "avg_scores": {"USKT": 100, "Not Required": 94, "In Process": 80, "Unknown": 100, "Not Started": 28, "Completed": 96}, "owners": ["Ajish", "Alka", "Ankit", "Anuj", "Chhaya", "Chintan", "Himanshu", "NA / Turab", "Prabha", "Prashu", "Rajesh (eSP)", "Rohan", "Rohan (eSP)", "Sivaprasad", "Smitha", "Soumya", "Tehzeeb"], "checklist": [[10, 2, 6], [9, 4, 6], [2, 4, 0], [5, 4, 0]], "owner_rows": {"Ajish": [0, 0, 1, 2, 0, 0, 0], "Alka": [1, 0, 0, 4, 0, 0, 0], "Ankit": [0, 0, 0, 3, 0, 0, 0], "Anuj": [0, 0, 0, 2, 1, 0, 0], "Chhaya": [0, 0, 0, 0, 1, 0, 0], "Chintan": [0, 1, 2, 0, 0, 0, 0], "Himanshu": [0, 1, 3, 1, 0, 0, 0], "NA / Turab": [0, 0, 0, 0, 0, 0, 1], "Prabha": [0, 0, 0, 1, 0, 0, 0], "Prashu": [2, 0, 0, 0, 0, 0, 0], "Rajesh (eSP)": [2, 0, 0, 2, 0, 0, 0], "Rohan": [1, 0, 0, 0, 0, 0, 0], "Rohan (eSP)": [2, 0, 1, 1, 0, 0, 4], "Sivaprasad": [2, 0, 1, 0, 0, 0, 0], "Smitha": [1, 0, 0, 1, 0, 0, 0], "Soumya": [0, 0, 2, 0, 0, 3, 0], "Tehzeeb": [0, 0, 2, 1, 0, 1, 0]}, "total": 69, "all_statuses": ["Completed", "In Process", "Not Started", "Not Required", "USKT", "Continues", "Unknown"]};
+var activeStatus = null;
 
-const BADGE = {
-  'Completed':   'b-cmp',
-  'In Process':  'b-ip',
-  'Not Started': 'b-ns',
-  'Not Required':'b-nr',
-  'USKT':        'b-uskt',
-  'Continues':   'b-cont',
-  'Unknown':     'b-unk',
-};
-
-const STATUS_COLORS = {
+var STATUS_COLORS = {
   'Completed':   '#3B6D11',
-  'In Process':  '#BA7517',
-  'Not Started': '#E24B4A',
-  'Not Required':'#185FA5',
-  'USKT':        '#0F766E',
-  'Continues':   '#3C3489',
-  'Unknown':     '#888780',
+  'In Process':  '#D97706',
+  'Not Started': '#DC2626',
+  'Not Required':'#2563EB',
+  'USKT':        '#0D9488',
+  'Continues':   '#7C3AED',
+  'Unknown':     '#6B7280',
 };
+var ALL_STATUSES = ['Completed','In Process','Not Started','Not Required','USKT','Continues','Unknown'];
 
-let activeFilter = null;
-
-function scoreColor(s) {
-  if (s === null) return '#888780';
-  return s >= 80 ? '#3B6D11' : s >= 50 ? '#BA7517' : '#E24B4A';
-}
-
-function renderTable(items) {
-  const tbody = document.getElementById('itemTable');
-  const empty = document.getElementById('emptyMsg');
-  const count = document.getElementById('rowCount');
-  tbody.innerHTML = '';
-  count.textContent = items.length + ' item' + (items.length !== 1 ? 's' : '');
-  if (!items.length) { empty.style.display='block'; return; }
-  empty.style.display='none';
-  items.forEach(r => {
-    const sc = r.score !== null ? r.score : null;
-    const col = scoreColor(sc);
-    const scoreFill = sc !== null
-      ? `<div class="score-bar"><div class="score-track"><div class="score-fill" style="width:${sc}%;background:${col}"></div></div><span class="score-num" style="color:${col}">${sc}%</span></div>`
-      : '<span style="color:#888780;font-size:11px">—</span>';
-
-    function dot(v) {
-      if (!v) return '<span style="color:#ccc">—</span>';
-      const vl = v.toLowerCase();
-      if (vl==='done'||vl==='yes') return '<span style="color:#3B6D11;font-weight:600">✓</span>';
-      if (vl==='no') return '<span style="color:#E24B4A;font-weight:600">✗</span>';
-      if (vl.includes('not required')) return '<span style="color:#888780;font-size:10px">N/R</span>';
-      return `<span style="color:#888780;font-size:10px">${v}</span>`;
-    }
-
-    const pending = (r.pending||'').replace(/\n/g,' ');
-    const lwd = r.lwd && r.lwd !== '2026-12-31' ? r.lwd.slice(5) : (r.lwd ? 'Dec 31' : '—');
-
-    tbody.innerHTML += `<tr>
-      <td class="td-area">${r.area}</td>
-      <td>${r.owner||'—'}</td>
-      <td style="color:var(--text2)">${r.pm||'—'}</td>
-      <td><span class="badge ${BADGE[r.status]||'b-unk'}">${r.status}</span></td>
-      <td>${scoreFill}</td>
-      <td style="color:var(--text3);font-size:11px">${lwd}</td>
-      <td style="text-align:center">${dot(r.sw)}</td>
-      <td style="text-align:center">${dot(r.shadow)}</td>
-      <td style="text-align:center">${dot(r.signoff)}</td>
-      <td class="td-trunc" title="${pending}">${pending||'—'}</td>
-    </tr>`;
+// ── DONUT LEGEND ──
+(function() {
+  var lg = document.getElementById('donutLegend');
+  ALL_STATUSES.forEach(function(s) {
+    var cnt = META.status_counts[s] || 0;
+    var d = document.createElement('div'); d.className = 'legend-dot';
+    d.innerHTML = '<span style="background:'+STATUS_COLORS[s]+'"></span>'+s+' ('+cnt+')';
+    lg.appendChild(d);
   });
-}
+})();
 
-function applyFilter(status) {
-  activeFilter = status;
-  document.getElementById('chipLabel').textContent = status + ' ';
-  document.getElementById('filterChip').style.display = 'inline-flex';
-  // Highlight active metric card
-  document.querySelectorAll('.metric').forEach(m => {
-    m.style.opacity = m.dataset.status === status ? '1' : '0.45';
-  });
-  const filtered = DATA.filter(r => r.status === status);
-  renderTable(filtered);
-  document.getElementById('itemTable').closest('.table-wrap').scrollIntoView({behavior:'smooth', block:'nearest'});
-  // Update donut highlight
-  const labels = ['Completed','In Process','Not Started','Not Required','USKT','Continues','Unknown'];
-  const idx = labels.indexOf(status);
-  statusChart.data.datasets[0].offset = labels.map((_,i) => i===idx ? 14 : 0);
-  statusChart.update();
-}
-
-function clearFilter() {
-  activeFilter = null;
-  document.getElementById('filterChip').style.display = 'none';
-  document.querySelectorAll('.metric').forEach(m => m.style.opacity = '1');
-  renderTable(DATA);
-  statusChart.data.datasets[0].offset = new Array(7).fill(0);
-  statusChart.update();
-}
-
-// Wire metric cards
-document.querySelectorAll('.metric[data-status]').forEach(card => {
-  card.addEventListener('click', () => {
-    const s = card.dataset.status;
-    if (activeFilter === s) clearFilter();
-    else applyFilter(s);
-  });
-});
-
-// Initial render
-renderTable(DATA);
-
-// STATUS DONUT
-const statusChart = new Chart(document.getElementById('statusChart'), {
+// ── DONUT CHART ──
+var donutData = ALL_STATUSES.map(function(s){ return META.status_counts[s] || 0; });
+var donutChart = new Chart(document.getElementById('donutChart'), {
   type: 'doughnut',
   data: {
-    labels: ['Completed','In Process','Not Started','Not Required','USKT','Continues','Unknown'],
+    labels: ALL_STATUSES,
     datasets: [{
-      data: [10,3,13,30,5,4,4],
-      backgroundColor: ['#3B6D11','#BA7517','#E24B4A','#185FA5','#0F766E','#3C3489','#888780'],
+      data: donutData,
+      backgroundColor: ALL_STATUSES.map(function(s){ return STATUS_COLORS[s]; }),
       borderWidth: 3,
-      borderColor: '#fff',
-      hoverOffset: 8,
-      offset: new Array(7).fill(0)
+      borderColor: '#ffffff',
+      hoverOffset: 10,
+      offset: new Array(ALL_STATUSES.length).fill(0),
     }]
   },
   options: {
-    responsive: true, maintainAspectRatio: false,
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '62%',
     plugins: {
       legend: { display: false },
-      tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw}` } }
+      tooltip: { callbacks: { label: function(ctx) { return '  ' + ctx.label + ': ' + ctx.raw; } } }
     },
-    cutout: '60%',
-    onClick: (evt, elements) => {
+    onClick: function(evt, elements) {
       if (!elements.length) { clearFilter(); return; }
-      const label = statusChart.data.labels[elements[0].index];
-      if (activeFilter === label) clearFilter();
-      else applyFilter(label);
+      var label = ALL_STATUSES[elements[0].index];
+      if (activeStatus === label) { clearFilter(); }
+      else { applyFilter(label); }
     },
-    onHover: (evt, els) => { evt.native.target.style.cursor = els.length ? 'pointer' : 'default'; }
+    onHover: function(evt, els) { evt.native.target.style.cursor = els.length ? 'pointer' : 'default'; }
   }
 });
 
-// OWNER STACKED BAR
-const owners = ['Ajish','Alka','Ankit','Anuj','Chintan','Himanshu','Prashu','Rajesh (eSP)','Rohan (eSP)','Sivaprasad','Smitha','Soumya','Tehzeeb','chhaya'];
-const ownerData = (status) => owners.map(o => {
-  return DATA.filter(r => r.owner === o && r.status === status).length;
-});
-
-new Chart(document.getElementById('ownerChart'), {
-  type: 'bar',
-  data: {
-    labels: owners,
-    datasets: [
-      { label:'Completed',   data: ownerData('Completed'),    backgroundColor:'#3B6D11', borderRadius:3, barThickness:14 },
-      { label:'In Process',  data: ownerData('In Process'),   backgroundColor:'#BA7517', borderRadius:3, barThickness:14 },
-      { label:'Not Started', data: ownerData('Not Started'),  backgroundColor:'#E24B4A', borderRadius:3, barThickness:14 },
-      { label:'Not Required',data: ownerData('Not Required'), backgroundColor:'#185FA5', borderRadius:3, barThickness:14 },
-      { label:'USKT',        data: ownerData('USKT'),         backgroundColor:'#0F766E', borderRadius:3, barThickness:14 },
-      { label:'Continues',   data: ownerData('Continues'),    backgroundColor:'#3C3489', borderRadius:3, barThickness:14 },
-      { label:'Unknown',     data: ownerData('Unknown'),      backgroundColor:'#888780', borderRadius:3, barThickness:14 },
-    ]
-  },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    plugins: { legend: { display: false } },
-    scales: {
-      x: { stacked:true, ticks:{ font:{size:9}, color:'#888780', maxRotation:40 }, grid:{ display:false } },
-      y: { stacked:true, ticks:{ font:{size:10}, color:'#888780' }, grid:{ color:'rgba(0,0,0,0.06)' } }
-    }
+// ── READINESS CHART ──
+var readLabels = [], readVals = [], readColors = [];
+ALL_STATUSES.forEach(function(s) {
+  if (META.avg_scores[s] !== undefined) {
+    readLabels.push(s); readVals.push(META.avg_scores[s]); readColors.push(STATUS_COLORS[s]);
   }
 });
-
-// READINESS BAR
 new Chart(document.getElementById('readinessChart'), {
   type: 'bar',
-  data: {
-    labels: ['Completed','In Process','USKT'],
-    datasets: [{ data:[96,80,100], backgroundColor:['#3B6D11','#BA7517','#0F766E'], borderRadius:5, barThickness:28 }]
-  },
+  data: { labels: readLabels, datasets: [{ data: readVals, backgroundColor: readColors, borderRadius: 6, barThickness: 28 }] },
   options: {
-    indexAxis: 'y',
-    responsive: true, maintainAspectRatio: false,
-    plugins: { legend:{ display:false }, tooltip:{ callbacks:{ label: ctx => ' '+ctx.raw+'%' } } },
+    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(c){ return ' '+c.raw+'%'; } } } },
     scales: {
-      x: { min:0, max:110, ticks:{ callback: v=>v+'%', font:{size:11}, color:'#888780' }, grid:{ color:'rgba(0,0,0,0.06)' } },
-      y: { ticks:{ font:{size:11}, color:'#5f5e5a' }, grid:{ display:false } }
+      x: { min:0, max:110, ticks: { callback: function(v){return v+'%';}, font:{size:11}, color:'#A1A1AA' }, grid: { color:'rgba(0,0,0,0.05)' } },
+      y: { ticks: { font:{size:12}, color:'#52525B' }, grid: { display:false } }
     }
   }
 });
 
-// CHECKLIST BAR
-function checkStat(field, val) {
-  return DATA.filter(r => {
-    const v = (r[field]||'').toLowerCase();
-    if (val==='done') return v==='done'||v==='yes';
-    if (val==='no') return v==='no';
-    if (val==='nr') return v.includes('not required');
-    return false;
-  }).length;
-}
+// ── CHECKLIST CHART ──
+var CL = META.checklist;
 new Chart(document.getElementById('checklistChart'), {
   type: 'bar',
   data: {
     labels: ['State Walkthrough','Shadowing','Reverse Demo','Receiver Signoff'],
     datasets: [
-      { label:'Done/Yes', data:[checkStat('sw','done'),checkStat('shadow','done'),checkStat('rd','done'),checkStat('signoff','done')], backgroundColor:'#3B6D11', borderRadius:4, barThickness:22 },
-      { label:'No/Pending', data:[checkStat('sw','no'),checkStat('shadow','no'),checkStat('rd','no'),checkStat('signoff','no')], backgroundColor:'#E24B4A', borderRadius:4, barThickness:22 },
-      { label:'Not required', data:[checkStat('sw','nr'),checkStat('shadow','nr'),checkStat('rd','nr'),checkStat('signoff','nr')], backgroundColor:'#888780', borderRadius:4, barThickness:22 },
+      { label:'Done/Yes',    data: CL.map(function(c){return c[0];}), backgroundColor:'#3B6D11', borderRadius:4, barThickness:20 },
+      { label:'No/Pending',  data: CL.map(function(c){return c[1];}), backgroundColor:'#DC2626', borderRadius:4, barThickness:20 },
+      { label:'Not required',data: CL.map(function(c){return c[2];}), backgroundColor:'#A1A1AA', borderRadius:4, barThickness:20 },
     ]
   },
   options: {
-    responsive: true, maintainAspectRatio: false,
-    plugins: { legend:{ display:false } },
-    scales: {
-      x: { ticks:{ font:{size:10}, color:'#888780', maxRotation:10 }, grid:{ display:false } },
-      y: { ticks:{ font:{size:11}, color:'#888780' }, grid:{ color:'rgba(0,0,0,0.06)' } }
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{ display:false } },
+    scales:{
+      x:{ ticks:{font:{size:10},color:'#A1A1AA',maxRotation:10},grid:{display:false} },
+      y:{ ticks:{font:{size:11},color:'#A1A1AA'},grid:{color:'rgba(0,0,0,0.05)'} }
     }
   }
 });
+
+// ── OWNER CHART ──
+var owners = META.owners;
+new Chart(document.getElementById('ownerChart'), {
+  type: 'bar',
+  data: {
+    labels: owners,
+    datasets: ALL_STATUSES.map(function(s) {
+      return {
+        label: s,
+        data: owners.map(function(o) { return (META.owner_rows[o] || [])[META.all_statuses.indexOf(s)] || 0; }),
+        backgroundColor: STATUS_COLORS[s],
+        borderRadius: 3,
+        barThickness: 14,
+      };
+    })
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{ display:false } },
+    scales:{
+      x:{ stacked:true, ticks:{font:{size:9},color:'#A1A1AA',maxRotation:40},grid:{display:false} },
+      y:{ stacked:true, ticks:{font:{size:10},color:'#A1A1AA'},grid:{color:'rgba(0,0,0,0.05)'} }
+    }
+  }
+});
+
+// ── TABLE RENDER ──
+function scoreColor(s) {
+  if (s===null) return '#A1A1AA';
+  return s>=80?'#3B6D11':s>=50?'#D97706':'#DC2626';
+}
+function dotIcon(v) {
+  if (!v) return '<span class="dot-na">—</span>';
+  var vl = v.toLowerCase().trim();
+  if (vl==='done'||vl==='yes') return '<span class="dot-yes">&#10003;</span>';
+  if (vl==='no') return '<span class="dot-no">&#10007;</span>';
+  if (vl.includes('not required')) return '<span class="dot-nr">N/R</span>';
+  return '<span class="dot-na">—</span>';
+}
+function badgeClass(s) { return 'badge b-'+s.replace(/ /g,'-'); }
+function fmtLwd(v) {
+  if (!v||v.length<7) return '—';
+  if (v.startsWith('2026-12-31')) return 'Dec 31';
+  return v.slice(5).replace('-','/');
+}
+
+function renderTable(data) {
+  var tbody = document.getElementById('tableBody');
+  var empty = document.getElementById('emptyState');
+  var count = document.getElementById('rowCount');
+  tbody.innerHTML = '';
+  count.textContent = data.length + ' item' + (data.length!==1?'s':'');
+  if (!data.length) { empty.style.display='block'; return; }
+  empty.style.display='none';
+  data.forEach(function(r) {
+    var sc = r.score;
+    var col = scoreColor(sc);
+    var scoreHtml = sc!==null
+      ? '<div class="score-wrap"><div class="score-bar"><div class="score-fill" style="width:'+Math.min(sc,100)+'%;background:'+col+'"></div></div><span class="score-num" style="color:'+col+'">'+sc+'%</span></div>'
+      : '<span style="color:#D1D5DB;font-size:11px">—</span>';
+    var pending = (r.pending||'').replace(/\n/g,' ');
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td style="font-weight:600">'+r.area+'</td>'+
+      '<td>'+(r.owner||'—')+'</td>'+
+      '<td style="color:#52525B">'+(r.pm||'—')+'</td>'+
+      '<td><span class="'+badgeClass(r.status)+'">'+r.status+'</span></td>'+
+      '<td>'+scoreHtml+'</td>'+
+      '<td style="color:#A1A1AA;font-size:11px;font-family:monospace">'+fmtLwd(r.lwd)+'</td>'+
+      '<td style="text-align:center">'+dotIcon(r.sw)+'</td>'+
+      '<td style="text-align:center">'+dotIcon(r.shadow)+'</td>'+
+      '<td style="text-align:center">'+dotIcon(r.signoff)+'</td>'+
+      '<td style="color:#52525B;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+pending.replace(/"/g,"'")+'">'+( pending||'—')+'</td>';
+    tbody.appendChild(tr);
+  });
+}
+
+// ── FILTER LOGIC ──
+function applyFilter(status) {
+  activeStatus = status;
+  // badge
+  document.getElementById('filterLabel').textContent = status;
+  document.getElementById('filterBadge').style.display = 'inline-flex';
+  // stat cards
+  document.querySelectorAll('.stat-card').forEach(function(c) {
+    c.classList.toggle('active', c.dataset.s === status);
+    c.style.opacity = c.dataset.s === status ? '1' : '0.5';
+  });
+  // donut pop
+  var offsets = ALL_STATUSES.map(function(s,i) { return s===status ? 16 : 0; });
+  donutChart.data.datasets[0].offset = offsets;
+  donutChart.update();
+  // table
+  renderTable(ALL_DATA.filter(function(r){ return r.status===status; }));
+  document.getElementById('tableBody').closest('.table-card').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function clearFilter() {
+  activeStatus = null;
+  document.getElementById('filterBadge').style.display = 'none';
+  document.querySelectorAll('.stat-card').forEach(function(c) { c.classList.remove('active'); c.style.opacity='1'; });
+  donutChart.data.datasets[0].offset = new Array(ALL_STATUSES.length).fill(0);
+  donutChart.update();
+  renderTable(ALL_DATA);
+}
+
+// stat card clicks
+document.querySelectorAll('.stat-card').forEach(function(card) {
+  card.addEventListener('click', function() {
+    var s = card.dataset.s;
+    if (activeStatus === s) clearFilter();
+    else applyFilter(s);
+  });
+});
+
+// initial render
+renderTable(ALL_DATA);
 </script>
 </body>
 </html>
