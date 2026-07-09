@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KT Compliance Dashboard</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script>
 /*!
  * Chart.js v4.5.1
@@ -24,339 +22,166 @@
 
 </script>
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --bg: #F8F7F4;
-  --surface: #FFFFFF;
-  --surface2: #F0EDE8;
-  --surface3: #E8E4DE;
-  --border: rgba(0,0,0,0.08);
-  --border-md: rgba(0,0,0,0.14);
-  --text: #18181B;
-  --text2: #52525B;
-  --text3: #A1A1AA;
-  --green: #3B6D11; --green-bg: #EAF3DE; --green-mid: #6DB33F;
-  --amber: #D97706; --amber-bg: #FEF3C7;
-  --red: #DC2626;   --red-bg: #FEE2E2;
-  --blue: #2563EB;  --blue-bg: #EFF6FF;
-  --teal: #0D9488;  --teal-bg: #CCFBF1;
-  --purple: #7C3AED;--purple-bg: #EDE9FE;
-  --gray: #6B7280;  --gray-bg: #F3F4F6;
-  --radius: 12px;
-  --radius-sm: 8px;
-  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06);
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F8F7F4;--surface:#FFF;--surface2:#F0EDE8;--surface3:#E4E0D8;
+  --border:rgba(0,0,0,0.08);--border-md:rgba(0,0,0,0.14);
+  --text:#18181B;--text2:#52525B;--text3:#A1A1AA;
+  --green:#3B6D11;--green-bg:#EAF3DE;
+  --amber:#D97706;--amber-bg:#FEF3C7;
+  --red:#DC2626;--red-bg:#FEE2E2;
+  --blue:#2563EB;--blue-bg:#EFF6FF;
+  --teal:#0D9488;--teal-bg:#CCFBF1;
+  --purple:#7C3AED;--purple-bg:#EDE9FE;
+  --gray:#6B7280;--gray-bg:#F3F4F6;
+  --radius:12px;
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:0 4px 16px rgba(0,0,0,0.1);
 }
-body {
-  font-family: 'DM Sans', -apple-system, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-/* ── HEADER ── */
-.header {
-  background: var(--text);
-  color: #fff;
-  padding: 20px 32px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-}
-.header-left h1 {
-  font-size: 20px;
-  font-weight: 600;
-  letter-spacing: -0.4px;
-  margin-bottom: 3px;
-  color: #fff;
-}
-.header-left p { font-size: 13px; color: rgba(255,255,255,0.55); }
-.header-badge {
-  font-size: 11px;
-  font-weight: 500;
-  background: rgba(255,255,255,0.1);
-  color: rgba(255,255,255,0.7);
-  padding: 4px 14px;
-  border-radius: 20px;
-  border: 1px solid rgba(255,255,255,0.15);
-  white-space: nowrap;
-}
-
-/* ── LAYOUT ── */
-.page { max-width: 1280px; margin: 0 auto; padding: 28px 28px 48px; }
-.section-title {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--text3);
-  margin-bottom: 12px;
-  margin-top: 28px;
-}
-
-/* ── STAT CARDS ── */
-.stat-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 10px;
-  margin-bottom: 24px;
-}
-.stat-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px;
-  cursor: pointer;
-  transition: all 0.15s;
-  position: relative;
-  overflow: hidden;
-}
-.stat-card::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 3px;
-  opacity: 0;
-  transition: opacity 0.15s;
-}
-.stat-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
-.stat-card.active { box-shadow: var(--shadow-md); transform: translateY(-2px); }
-.stat-card.active::after { opacity: 1; }
-.stat-card[data-s="Completed"]::after { background: var(--green); }
-.stat-card[data-s="In Process"]::after { background: var(--amber); }
-.stat-card[data-s="Not Started"]::after { background: var(--red); }
-.stat-card[data-s="Not Required"]::after { background: var(--blue); }
-.stat-card[data-s="USKT"]::after { background: var(--teal); }
-.stat-card[data-s="Continues"]::after { background: var(--purple); }
-.stat-card[data-s="Unknown"]::after { background: var(--gray); }
-.stat-card.active[data-s="Completed"] { border-color: var(--green); background: var(--green-bg); }
-.stat-card.active[data-s="In Process"] { border-color: var(--amber); background: var(--amber-bg); }
-.stat-card.active[data-s="Not Started"] { border-color: var(--red); background: var(--red-bg); }
-.stat-card.active[data-s="Not Required"] { border-color: var(--blue); background: var(--blue-bg); }
-.stat-card.active[data-s="USKT"] { border-color: var(--teal); background: var(--teal-bg); }
-.stat-card.active[data-s="Continues"] { border-color: var(--purple); background: var(--purple-bg); }
-.stat-card.active[data-s="Unknown"] { border-color: var(--gray); background: var(--gray-bg); }
-.stat-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text3); margin-bottom: 8px; }
-.stat-value { font-size: 30px; font-weight: 600; letter-spacing: -1px; line-height: 1; margin-bottom: 4px; }
-.stat-card[data-s="Completed"] .stat-value { color: var(--green); }
-.stat-card[data-s="In Process"] .stat-value { color: var(--amber); }
-.stat-card[data-s="Not Started"] .stat-value { color: var(--red); }
-.stat-card[data-s="Not Required"] .stat-value { color: var(--blue); }
-.stat-card[data-s="USKT"] .stat-value { color: var(--teal); }
-.stat-card[data-s="Continues"] .stat-value { color: var(--purple); }
-.stat-card[data-s="Unknown"] .stat-value { color: var(--gray); }
-.stat-sub { font-size: 11px; color: var(--text3); }
-
-/* ── CHARTS ROW ── */
-.charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-.chart-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px 22px;
-  box-shadow: var(--shadow);
-}
-.chart-card h3 { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
-.chart-sub { font-size: 12px; color: var(--text3); margin-bottom: 14px; }
-.chart-wrap { position: relative; width: 100%; }
-.legend { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
-.legend-dot { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text2); }
-.legend-dot span { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-
-/* ── TABLE SECTION ── */
-.table-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  overflow: hidden;
-}
-.table-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border);
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.table-header-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.table-header h3 { font-size: 14px; font-weight: 600; }
-.filter-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 3px 10px 3px 12px;
-  background: var(--blue-bg);
-  color: var(--blue);
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 500;
-  border: 1px solid rgba(37,99,235,0.2);
-}
-.filter-badge button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--blue);
-  font-size: 15px;
-  line-height: 1;
-  padding: 0 0 0 2px;
-  opacity: 0.6;
-  transition: opacity 0.1s;
-}
-.filter-badge button:hover { opacity: 1; }
-.row-count { font-size: 12px; color: var(--text3); font-variant-numeric: tabular-nums; }
-
-table.kt {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12.5px;
-  table-layout: fixed;
-}
-table.kt thead th {
-  text-align: left;
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  color: var(--text3);
-  padding: 10px 14px;
-  background: var(--bg);
-  border-bottom: 1px solid var(--border-md);
-  white-space: nowrap;
-}
-table.kt tbody td {
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--border);
-  color: var(--text);
-  vertical-align: middle;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-table.kt tbody tr:last-child td { border-bottom: none; }
-table.kt tbody tr:hover td { background: var(--bg); }
-
-.badge {
-  display: inline-block;
-  padding: 2px 10px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 500;
-  white-space: nowrap;
-  font-family: 'DM Mono', monospace;
-}
-.b-Completed   { background: var(--green-bg); color: var(--green); }
-.b-In-Process  { background: var(--amber-bg); color: var(--amber); }
-.b-Not-Started { background: var(--red-bg);   color: var(--red); }
-.b-Not-Required{ background: var(--blue-bg);  color: var(--blue); }
-.b-USKT        { background: var(--teal-bg);  color: var(--teal); }
-.b-Continues   { background: var(--purple-bg);color: var(--purple); }
-.b-Unknown     { background: var(--gray-bg);  color: var(--gray); }
-
-.score-wrap { display: flex; align-items: center; gap: 8px; }
-.score-bar { flex: 1; height: 5px; background: var(--surface2); border-radius: 3px; overflow: hidden; min-width: 40px; }
-.score-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
-.score-num { font-size: 11px; font-weight: 600; font-family: 'DM Mono', monospace; min-width: 28px; text-align: right; }
-
-.dot-yes { color: #3B6D11; font-weight: 700; }
-.dot-no  { color: #DC2626; font-weight: 700; }
-.dot-nr  { color: var(--text3); font-size: 10px; }
-.dot-na  { color: #D1D5DB; }
-
-.empty-state {
-  padding: 48px;
-  text-align: center;
-  color: var(--text3);
-  font-size: 13px;
-}
-
-@media (max-width: 900px) {
-  .page { padding: 16px; }
-  .stat-grid { grid-template-columns: repeat(4, 1fr); }
-  .charts-row { grid-template-columns: 1fr; }
-}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+.header{background:var(--text);color:#fff;padding:18px 32px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.header h1{font-size:19px;font-weight:600;letter-spacing:-0.4px;margin-bottom:3px;color:#fff}
+.header p{font-size:12px;color:rgba(255,255,255,0.5)}
+.header-badge{font-size:11px;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);padding:4px 14px;border-radius:20px;border:1px solid rgba(255,255,255,0.15);white-space:nowrap}
+.area-bar{background:var(--surface);border-bottom:1px solid var(--border-md);padding:10px 32px;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.area-bar-inner{max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:5px}
+.area-group-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.area-group-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);min-width:54px;flex-shrink:0}
+.area-btns{display:flex;flex-wrap:wrap;gap:3px;align-items:center}
+.area-btn{padding:3px 9px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid transparent;transition:all 0.12s;white-space:nowrap;line-height:1.5;font-family:inherit}
+.area-btn:hover{filter:brightness(0.9);transform:translateY(-1px);box-shadow:0 2px 6px rgba(0,0,0,0.12)}
+.area-btn.active{border-color:currentColor!important;box-shadow:0 0 0 2px rgba(0,0,0,0.07);transform:translateY(-1px)}
+.area-btn.ab-all{background:#F1EFE8;color:#52525B;border-color:#ddd}.area-btn.ab-all.active{border-color:#888}
+.area-btn.ab-Completed{background:var(--green-bg);color:var(--green)}
+.area-btn.ab-In-Process{background:var(--amber-bg);color:var(--amber)}
+.area-btn.ab-Not-Started{background:var(--red-bg);color:var(--red)}
+.area-btn.ab-Not-Required{background:var(--blue-bg);color:var(--blue)}
+.area-btn.ab-USKT{background:var(--teal-bg);color:var(--teal)}
+.area-btn.ab-Continues{background:var(--purple-bg);color:var(--purple)}
+.area-btn.ab-Unknown{background:var(--gray-bg);color:var(--gray)}
+.area-clear-btn{padding:3px 10px;border-radius:5px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--border-md);background:var(--surface2);color:var(--text2);font-family:inherit;display:none}
+.area-clear-btn.show{display:inline-block}
+.area-clear-btn:hover{background:var(--surface3)}
+.multi-hint{font-size:10px;color:var(--text3);font-style:italic;margin-left:2px}
+.page{max-width:1280px;margin:0 auto;padding:24px 28px 48px}
+.section-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:12px;margin-top:24px}
+.stat-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:22px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;cursor:pointer;transition:all 0.15s;position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;opacity:0;transition:opacity 0.15s}
+.stat-card:hover,.stat-card.active{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.stat-card.active::after{opacity:1}
+.stat-card[data-s="Completed"]::after{background:var(--green)}.stat-card[data-s="Completed"].active{border-color:var(--green);background:var(--green-bg)}.stat-card[data-s="Completed"] .sv{color:var(--green)}
+.stat-card[data-s="In Process"]::after{background:var(--amber)}.stat-card[data-s="In Process"].active{border-color:var(--amber);background:var(--amber-bg)}.stat-card[data-s="In Process"] .sv{color:var(--amber)}
+.stat-card[data-s="Not Started"]::after{background:var(--red)}.stat-card[data-s="Not Started"].active{border-color:var(--red);background:var(--red-bg)}.stat-card[data-s="Not Started"] .sv{color:var(--red)}
+.stat-card[data-s="Not Required"]::after{background:var(--blue)}.stat-card[data-s="Not Required"].active{border-color:var(--blue);background:var(--blue-bg)}.stat-card[data-s="Not Required"] .sv{color:var(--blue)}
+.stat-card[data-s="USKT"]::after{background:var(--teal)}.stat-card[data-s="USKT"].active{border-color:var(--teal);background:var(--teal-bg)}.stat-card[data-s="USKT"] .sv{color:var(--teal)}
+.stat-card[data-s="Continues"]::after{background:var(--purple)}.stat-card[data-s="Continues"].active{border-color:var(--purple);background:var(--purple-bg)}.stat-card[data-s="Continues"] .sv{color:var(--purple)}
+.stat-card[data-s="Unknown"]::after{background:var(--gray)}.stat-card[data-s="Unknown"].active{border-color:var(--gray);background:var(--gray-bg)}.stat-card[data-s="Unknown"] .sv{color:var(--gray)}
+.sl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);margin-bottom:7px}
+.sv{font-size:28px;font-weight:700;letter-spacing:-1px;line-height:1;margin-bottom:4px}
+.ss{font-size:11px;color:var(--text3)}
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow)}
+.chart-card h3{font-size:13px;font-weight:600;margin-bottom:3px}
+.chart-sub{font-size:12px;color:var(--text3);margin-bottom:12px}
+.chart-wrap{position:relative;width:100%}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.ld{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)}
+.ld span{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.table-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.table-toolbar{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--border);gap:10px;flex-wrap:wrap}
+.toolbar-left{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.toolbar-left h3{font-size:14px;font-weight:600}
+.status-chip{display:inline-flex;align-items:center;gap:5px;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:500;background:var(--blue-bg);color:var(--blue);border:1px solid rgba(37,99,235,0.2)}
+.status-chip button{background:none;border:none;cursor:pointer;color:inherit;opacity:0.6;font-size:14px;padding:0;line-height:1}
+.status-chip button:hover{opacity:1}
+.col-chip{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;background:var(--green-bg);color:var(--green)}
+.col-chip button{background:none;border:none;cursor:pointer;color:inherit;opacity:0.6;font-size:13px;padding:0;line-height:1}
+.col-chip button:hover{opacity:1}
+.row-count{font-size:12px;color:var(--text3);white-space:nowrap}
+.clear-all-btn{font-size:11px;padding:3px 10px;border-radius:6px;cursor:pointer;border:1px solid var(--border-md);background:none;color:var(--text2);font-family:inherit;display:none}
+.clear-all-btn:hover{background:var(--surface2)}
+table.kt{width:100%;border-collapse:collapse;font-size:12.5px;table-layout:fixed}
+table.kt thead th{text-align:left;background:var(--surface2);border-bottom:1px solid var(--border-md);white-space:nowrap;position:relative;padding:0}
+/* Fixed header row - NO rebuild on refresh */
+.th-wrap{display:flex;align-items:center;justify-content:space-between;gap:2px;padding:8px 10px}
+.th-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);flex:1;min-width:0}
+.cf-btn{flex-shrink:0;background:none;border:none;cursor:pointer;color:var(--text3);font-size:11px;padding:3px 5px;border-radius:4px;line-height:1;transition:all 0.1s}
+.cf-btn:hover{background:var(--surface3);color:var(--text)}
+.cf-btn.active-filter{color:var(--blue);font-weight:700}
+/* Dropdown portal - fixed position, appended to body */
+.cf-portal{position:fixed;z-index:9999;background:var(--surface);border:1px solid var(--border-md);border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,0.15);min-width:200px;max-width:260px;overflow:hidden;display:none}
+.cf-portal.open{display:block}
+.cf-search{width:100%;border:none;border-bottom:1px solid var(--border);padding:9px 12px;font-size:12px;font-family:inherit;outline:none;background:var(--surface2);color:var(--text)}
+.cf-opts{max-height:210px;overflow-y:auto}
+.cf-opt{display:flex;align-items:center;gap:8px;padding:7px 12px;font-size:12px;cursor:pointer;color:var(--text);user-select:none}
+.cf-opt:hover{background:var(--surface2)}
+.cf-opt input[type=checkbox]{accent-color:var(--blue);width:13px;height:13px;cursor:pointer;flex-shrink:0;pointer-events:none}
+.cf-opt label{cursor:pointer;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;pointer-events:none}
+.cf-foot{display:flex;justify-content:space-between;padding:8px 12px;border-top:1px solid var(--border);gap:6px;background:var(--surface)}
+.cf-foot button{font-size:11px;padding:4px 12px;border-radius:6px;cursor:pointer;border:1px solid var(--border);font-family:inherit;transition:all 0.1s}
+.cf-apply{background:var(--blue);color:#fff;border-color:var(--blue)!important}
+.cf-apply:hover{background:#1d4ed8}
+.cf-clear-col{background:none;color:var(--text2)}
+.cf-clear-col:hover{background:var(--surface2)}
+table.kt tbody td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+table.kt tbody tr:last-child td{border-bottom:none}
+table.kt tbody tr:hover td{background:var(--bg)}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap}
+.b-Completed{background:var(--green-bg);color:var(--green)}
+.b-In-Process{background:var(--amber-bg);color:var(--amber)}
+.b-Not-Started{background:var(--red-bg);color:var(--red)}
+.b-Not-Required{background:var(--blue-bg);color:var(--blue)}
+.b-USKT{background:var(--teal-bg);color:var(--teal)}
+.b-Continues{background:var(--purple-bg);color:var(--purple)}
+.b-Unknown{background:var(--gray-bg);color:var(--gray)}
+.score-wrap{display:flex;align-items:center;gap:7px}
+.score-bar{flex:1;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;min-width:30px}
+.score-fill{height:100%;border-radius:3px}
+.score-num{font-size:11px;font-weight:600;font-family:'SF Mono','Fira Code',Consolas,monospace;min-width:28px;text-align:right}
+.dot-yes{color:#3B6D11;font-weight:700}.dot-no{color:#DC2626;font-weight:700}.dot-nr{color:var(--text3);font-size:10px}.dot-na{color:#D1D5DB}
+.empty-state{padding:48px;text-align:center;color:var(--text3);font-size:13px}
+@media(max-width:900px){.page{padding:14px}.stat-grid{grid-template-columns:repeat(4,1fr)}.charts-row{grid-template-columns:1fr}.area-bar{padding:8px 14px}}
 </style>
 </head>
 <body>
-
 <div class="header">
-  <div class="header-left">
-    <h1>KT Compliance Dashboard</h1>
-    <p>Knowledge transfer status &mdash; India PMs &rarr; US PMs</p>
-  </div>
-  <div class="header-badge">As of May 2026 &nbsp;&middot;&nbsp; 69 product areas</div>
+  <div><h1>KT Compliance Dashboard</h1><p>Knowledge transfer status &mdash; India PMs &rarr; US PMs</p></div>
+  <div class="header-badge">Latest data &nbsp;&middot;&nbsp; 68 product areas</div>
+</div>
+<div class="area-bar"><div class="area-bar-inner" id="areaBarInner"></div></div>
+
+<!-- single portal dropdown appended to body, reused for all columns -->
+<div class="cf-portal" id="cfPortal">
+  <div id="cfPortalContent"></div>
 </div>
 
 <div class="page">
-
   <div class="section-title">Overview</div>
-  <div class="stat-grid" id="statGrid">
-    <div class="stat-card" data-s="Completed">
-      <div class="stat-label">Completed</div>
-      <div class="stat-value">11</div>
-      <div class="stat-sub">Avg 96% ready</div>
-    </div>
-    <div class="stat-card" data-s="In Process">
-      <div class="stat-label">In Process</div>
-      <div class="stat-value">2</div>
-      <div class="stat-sub">Avg 80% ready</div>
-    </div>
-    <div class="stat-card" data-s="Not Started">
-      <div class="stat-label">Not Started</div>
-      <div class="stat-value">12</div>
-      <div class="stat-sub">Avg 28% ready</div>
-    </div>
-    <div class="stat-card" data-s="Not Required">
-      <div class="stat-label">Not Required</div>
-      <div class="stat-value">30</div>
-      <div class="stat-sub">Avg 94% ready</div>
-    </div>
-    <div class="stat-card" data-s="USKT">
-      <div class="stat-label">USKT</div>
-      <div class="stat-value">5</div>
-      <div class="stat-sub">Avg 100% ready</div>
-    </div>
-    <div class="stat-card" data-s="Continues">
-      <div class="stat-label">Continues</div>
-      <div class="stat-value">4</div>
-      <div class="stat-sub">Avg —% ready</div>
-    </div>
-    <div class="stat-card" data-s="Unknown">
-      <div class="stat-label">Unknown</div>
-      <div class="stat-value">5</div>
-      <div class="stat-sub">Avg 100% ready</div>
-    </div>
-  </div>
-
+  <div class="stat-grid"><div class="stat-card" data-s="Completed"><div class="sl">Completed</div><div class="sv">11</div><div class="ss">Avg 100% ready</div></div><div class="stat-card" data-s="In Process"><div class="sl">In Process</div><div class="sv">2</div><div class="ss">Avg 100% ready</div></div><div class="stat-card" data-s="Not Started"><div class="sl">Not Started</div><div class="sv">11</div><div class="ss">Avg 45% ready</div></div><div class="stat-card" data-s="Not Required"><div class="sl">Not Required</div><div class="sv">30</div><div class="ss">Avg 93% ready</div></div><div class="stat-card" data-s="USKT"><div class="sl">USKT</div><div class="sv">5</div><div class="ss">Avg 100% ready</div></div><div class="stat-card" data-s="Continues"><div class="sl">Continues</div><div class="sv">4</div><div class="ss">Ongoing</div></div><div class="stat-card" data-s="Unknown"><div class="sl">Unknown</div><div class="sv">5</div><div class="ss">TBD</div></div></div>
   <div class="charts-row">
     <div class="chart-card">
       <h3>Status Distribution</h3>
-      <div class="chart-sub">All 69 product areas &middot; Click a slice to filter</div>
+      <div class="chart-sub">All 68 areas &middot; Click a slice to filter</div>
       <div class="legend" id="donutLegend"></div>
-      <div class="chart-wrap" style="height:220px"><canvas id="donutChart"></canvas></div>
+      <div class="chart-wrap" style="height:210px"><canvas id="donutChart"></canvas></div>
     </div>
     <div class="chart-card">
       <h3>Avg. Readiness Score by Status</h3>
       <div class="chart-sub">Percentage &mdash; higher is better</div>
-      <div class="chart-wrap" style="height:260px"><canvas id="readinessChart"></canvas></div>
+      <div class="chart-wrap" style="height:250px"><canvas id="readinessChart"></canvas></div>
     </div>
   </div>
-
   <div class="charts-row">
     <div class="chart-card">
       <h3>KT Checklist Completion</h3>
-      <div class="chart-sub">State Walkthrough &middot; Shadowing &middot; Reverse Demo &middot; Receiver Signoff</div>
+      <div class="chart-sub">SW &middot; Shadowing &middot; Reverse Demo &middot; Receiver Signoff</div>
       <div class="legend">
-        <div class="legend-dot"><span style="background:#3B6D11"></span>Done / Yes</div>
-        <div class="legend-dot"><span style="background:#DC2626"></span>No / Pending</div>
-        <div class="legend-dot"><span style="background:#A1A1AA"></span>Not Required</div>
+        <div class="ld"><span style="background:#3B6D11"></span>Done / Yes</div>
+        <div class="ld"><span style="background:#DC2626"></span>No / Pending</div>
+        <div class="ld"><span style="background:#A1A1AA"></span>Not Required</div>
       </div>
-      <div class="chart-wrap" style="height:190px"><canvas id="checklistChart"></canvas></div>
+      <div class="chart-wrap" style="height:185px"><canvas id="checklistChart"></canvas></div>
     </div>
     <div class="chart-card">
       <h3>India PM &mdash; Items by Status</h3>
@@ -364,260 +189,480 @@ table.kt tbody tr:hover td { background: var(--bg); }
       <div class="chart-wrap" style="height:240px"><canvas id="ownerChart"></canvas></div>
     </div>
   </div>
-
-  <div class="section-title" style="margin-top:16px">Item List</div>
+  <div class="section-title" style="margin-top:12px">Item List</div>
   <div class="table-card">
-    <div class="table-header">
-      <div class="table-header-left">
+    <div class="table-toolbar">
+      <div class="toolbar-left" id="toolbarLeft">
         <h3>All Items</h3>
-        <div id="filterBadge" style="display:none" class="filter-badge">
-          <span id="filterLabel"></span>
-          <button onclick="clearFilter()" title="Clear filter">&times;</button>
-        </div>
+        <span id="statusChip" class="status-chip" style="display:none">
+          <span id="statusChipLabel"></span>
+          <button onclick="clearStatusFilter()" title="Clear">&times;</button>
+        </span>
       </div>
-      <span class="row-count" id="rowCount">69 items</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button class="clear-all-btn" id="clearAllBtn" onclick="clearAll()">Clear all filters</button>
+        <span class="row-count" id="rowCount">68 items</span>
+      </div>
     </div>
     <div style="overflow-x:auto">
       <table class="kt">
         <colgroup>
-          <col style="width:7%"><col style="width:11%"><col style="width:12%"><col style="width:10%">
-          <col style="width:9%"><col style="width:8%"><col style="width:7%"><col style="width:7%">
-          <col style="width:7%"><col style="width:22%">
+          <col style="width:7%"><col style="width:10%"><col style="width:11%"><col style="width:10%">
+          <col style="width:8%"><col style="width:7%"><col style="width:6%"><col style="width:6%">
+          <col style="width:7%"><col style="width:28%">
         </colgroup>
         <thead>
-          <tr>
-            <th>Area</th><th>India PM</th><th>Receiving PM</th><th>Status</th>
-            <th>Readiness</th><th>Last WD</th><th>SW</th><th>Shadow</th>
-            <th>Signoff</th><th>Pending / Notes</th>
+          <tr id="theadRow">
+            <!-- built once by buildThead(), never rebuilt -->
           </tr>
         </thead>
         <tbody id="tableBody"></tbody>
       </table>
-      <div id="emptyState" class="empty-state" style="display:none">No items match this filter.</div>
+      <div id="emptyState" class="empty-state" style="display:none">No items match the current filters.</div>
     </div>
   </div>
-
 </div>
 
 <script>
-var ALL_DATA = [{"area": "MA", "owner": "Chhaya", "pm": "Turab/NewHire", "status": "USKT", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MI Ed-Fi", "owner": "", "pm": "Turab/NewHire", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MN Ed-Fi", "owner": "", "pm": "Turab/NewHire", "status": "USKT", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "BC", "owner": "", "pm": "Shereen", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "AB", "owner": "Tehzeeb", "pm": "Jessica", "status": "Not Required", "score": 80, "lwd": "", "pending": "Conformance , Current backlog, Engineering meetings", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "KS", "owner": "Chintan", "pm": "Jason*", "status": "In Process", "score": 90, "lwd": "2026-12-31", "pending": "", "sw": "Yes", "shadow": "Yes", "rd": "", "signoff": ""}, {"area": "SK", "owner": "", "pm": "Shereen", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NJ", "owner": "Alka", "pm": "ShanNita", "status": "Not Required", "score": null, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "WI Ed-Fi", "owner": "", "pm": "Turab/NewHire", "status": "USKT", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "WY", "owner": "NA / Turab", "pm": "Jason*", "status": "Unknown", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "Yes", "shadow": "Yes", "rd": "", "signoff": ""}, {"area": "GA", "owner": "Prabha", "pm": "Vette *", "status": "Not Required", "score": 90, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MO", "owner": "Anuj", "pm": "Jessica / Turab", "status": "Not Required", "score": 100, "lwd": "2026-06-12", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "CEDS", "owner": "Soumya", "pm": "Ben", "status": "Continues", "score": null, "lwd": "", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MB", "owner": "", "pm": "Shereen", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "SIF, SIF Unity", "owner": "Soumya", "pm": "Ben", "status": "Continues", "score": null, "lwd": "", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "VA", "owner": "Alka", "pm": "ShanNita", "status": "Not Required", "score": null, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NM", "owner": "", "pm": "Eric ->Michael", "status": "USKT", "score": 100, "lwd": "2026-12-31", "pending": "Eric -> Micheal", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "OK", "owner": "Anuj", "pm": "Turab/NewHire", "status": "USKT", "score": 100, "lwd": "2026-06-12", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "VT", "owner": "Ajish", "pm": "Vette/Newhire", "status": "Not Started", "score": 90, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "PA", "owner": "Alka", "pm": "ShanNita", "status": "Not Required", "score": null, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "ID", "owner": "Soumya", "pm": "Michael", "status": "Not Started", "score": 0, "lwd": "", "pending": "All", "sw": "No", "shadow": "No", "rd": "No", "signoff": "No"}, {"area": "UDC", "owner": "Tehzeeb", "pm": "", "status": "Continues", "score": null, "lwd": "", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "TX(esp)", "owner": "Rajesh (eSP)", "pm": "Fred", "status": "Not Required", "score": 90, "lwd": "2026-07-03", "pending": "Had a discussion with Debra! MD will be taken by Prashu and Debra and PA will be taken by Fred. Have a sync up call on 18th May to discuss. In a nutshell KT not required.", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "UT", "owner": "Soumya", "pm": "Michael", "status": "Not Started", "score": 0, "lwd": "", "pending": "All", "sw": "No", "shadow": "No", "rd": "No", "signoff": "No"}, {"area": "MS", "owner": "Anuj", "pm": "Jessica/Caron*", "status": "Not Required", "score": 100, "lwd": "2026-06-12", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "ON", "owner": "", "pm": "Shereen", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MD", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MN", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "ME", "owner": "Alka", "pm": "ShanNita", "status": "Not Required", "score": null, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "IA", "owner": "Ankit", "pm": "Fred/Newhire", "status": "Not Required", "score": 70, "lwd": "2026-12-31", "pending": "Sif Unity, IA current backlog and future commitments", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "ND", "owner": "Ankit", "pm": "Fred", "status": "Not Required", "score": null, "lwd": "2026-12-31", "pending": "", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "MT", "owner": "Chintan", "pm": "Michael", "status": "Not Started", "score": 20, "lwd": "2026-12-31", "pending": "Chintan is handling this independently", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "FL (esp )", "owner": "Himanshu", "pm": "", "status": "Not Started", "score": null, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NY", "owner": "Himanshu", "pm": "Shereen/NewHire", "status": "Not Started", "score": null, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "CA(esp)", "owner": "Rohan (eSP)", "pm": "Prashu", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "Prashu gave this to Rohan few months back and its given back.", "sw": "Done", "shadow": "Done", "rd": "", "signoff": "Done"}, {"area": "FL", "owner": "Himanshu", "pm": "Debra", "status": "Not Started", "score": 0, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MD(esp)", "owner": "Rajesh (eSP)", "pm": "Prashu", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "completed", "sw": "", "shadow": "", "rd": "", "signoff": "Done"}, {"area": "NJ(esp)", "owner": "Rajesh (eSP)", "pm": "Prashu", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "Prashu gave this to Rajesh few months back and its now coming back", "sw": "", "shadow": "", "rd": "", "signoff": "Done"}, {"area": "NY", "owner": "Rohan", "pm": "Prashu", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "Prashu gave this to Rohan few months back and its given back.", "sw": "Done", "shadow": "Done", "rd": "", "signoff": "Done"}, {"area": "OR", "owner": "Rohan (eSP)", "pm": "Prashu", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "Prashu Already handling OR state since Feb 2026", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "PA", "owner": "Rajesh (eSP)", "pm": "Fred", "status": "Not Required", "score": 100, "lwd": "2026-07-03", "pending": "completed", "sw": "", "shadow": "", "rd": "", "signoff": "Done"}, {"area": "CRDC", "owner": "Rohan (eSP)", "pm": "", "status": "Unknown", "score": null, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "IL(esp)", "owner": "Rohan (eSP)", "pm": "New Hire", "status": "Not Started", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MA(esp)", "owner": "Rohan (eSP)", "pm": "", "status": "Unknown", "score": null, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "OH(esp)", "owner": "Rohan (eSP)", "pm": "", "status": "Unknown", "score": null, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "VA(esp)", "owner": "Rohan (eSP)", "pm": "", "status": "Unknown", "score": null, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "WA(esp)", "owner": "Rohan (eSP)", "pm": "", "status": "Not Required", "score": null, "lwd": "2026-12-31", "pending": "Only till June 26", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "LA", "owner": "Sivaprasad", "pm": "Caron*", "status": "Not Started", "score": 0, "lwd": "2026-12-31", "pending": "Everything", "sw": "", "shadow": "No", "rd": "No", "signoff": "No"}, {"area": "WA", "owner": "Sivaprasad", "pm": "Dan*", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "Done", "shadow": "Done", "rd": "Done", "signoff": ""}, {"area": "CO", "owner": "Smitha", "pm": "Jason*", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "Done", "shadow": "Done", "rd": "Done", "signoff": ""}, {"area": "CT", "owner": "Tehzeeb", "pm": "Jessica", "status": "Not Started", "score": 50, "lwd": "", "pending": "Backlog\nRecent development", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "IL", "owner": "Tehzeeb", "pm": "Jessica", "status": "Not Started", "score": 0, "lwd": "", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "OR", "owner": "Prashu", "pm": "Dan*", "status": "Completed", "score": 100, "lwd": "", "pending": "", "sw": "Done", "shadow": "Done", "rd": "", "signoff": ""}, {"area": "AK", "owner": "Alka", "pm": "Dan*", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "Done", "shadow": "Done", "rd": "", "signoff": ""}, {"area": "MI", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NH", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "OH", "owner": "", "pm": "Meta", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "RI", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "WI", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "AZ", "owner": "Prashu", "pm": "Dan*", "status": "Completed", "score": 100, "lwd": "", "pending": "", "sw": "Done", "shadow": "Done", "rd": "", "signoff": ""}, {"area": "IN", "owner": "Himanshu", "pm": "Caron*", "status": "In Process", "score": 70, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NE", "owner": "Chintan", "pm": "Turab/ Caron*", "status": "Not Started", "score": 20, "lwd": "2026-12-31", "pending": "Chintan is handling this independently", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "CA", "owner": "Sivaprasad", "pm": "Jason*", "status": "Completed", "score": 60, "lwd": "2026-12-31", "pending": "Day  to Day Backlog management and sprint planning. Customer Introduction", "sw": "Yes", "shadow": "No", "rd": "No", "signoff": "No"}, {"area": "AL", "owner": "Smitha", "pm": "Debra", "status": "Not Required", "score": 80, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "FL (SIS)", "owner": "Himanshu", "pm": "Debra", "status": "Not Required", "score": null, "lwd": "2026-12-31", "pending": "Closure meeting  with current / pending backlog", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "SC", "owner": "Ajish", "pm": "Vette", "status": "Not Required", "score": 90, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "TN", "owner": "Ajish", "pm": "Vette", "status": "Not Required", "score": 90, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "TX", "owner": "Ankit", "pm": "Fred", "status": "Not Required", "score": 80, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "Ed-fi, DEX", "owner": "Soumya", "pm": "Ben", "status": "Continues", "score": null, "lwd": "", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}];
-var META     = {"status_counts": {"USKT": 5, "Not Required": 30, "In Process": 2, "Unknown": 5, "Continues": 4, "Not Started": 12, "Completed": 11}, "avg_scores": {"USKT": 100, "Not Required": 94, "In Process": 80, "Unknown": 100, "Not Started": 28, "Completed": 96}, "owners": ["Ajish", "Alka", "Ankit", "Anuj", "Chhaya", "Chintan", "Himanshu", "NA / Turab", "Prabha", "Prashu", "Rajesh (eSP)", "Rohan", "Rohan (eSP)", "Sivaprasad", "Smitha", "Soumya", "Tehzeeb"], "checklist": [[10, 2, 6], [9, 4, 6], [2, 4, 0], [5, 4, 0]], "owner_rows": {"Ajish": [0, 0, 1, 2, 0, 0, 0], "Alka": [1, 0, 0, 4, 0, 0, 0], "Ankit": [0, 0, 0, 3, 0, 0, 0], "Anuj": [0, 0, 0, 2, 1, 0, 0], "Chhaya": [0, 0, 0, 0, 1, 0, 0], "Chintan": [0, 1, 2, 0, 0, 0, 0], "Himanshu": [0, 1, 3, 1, 0, 0, 0], "NA / Turab": [0, 0, 0, 0, 0, 0, 1], "Prabha": [0, 0, 0, 1, 0, 0, 0], "Prashu": [2, 0, 0, 0, 0, 0, 0], "Rajesh (eSP)": [2, 0, 0, 2, 0, 0, 0], "Rohan": [1, 0, 0, 0, 0, 0, 0], "Rohan (eSP)": [2, 0, 1, 1, 0, 0, 4], "Sivaprasad": [2, 0, 1, 0, 0, 0, 0], "Smitha": [1, 0, 0, 1, 0, 0, 0], "Soumya": [0, 0, 2, 0, 0, 3, 0], "Tehzeeb": [0, 0, 2, 1, 0, 1, 0]}, "total": 69, "all_statuses": ["Completed", "In Process", "Not Started", "Not Required", "USKT", "Continues", "Unknown"]};
-var activeStatus = null;
+var ALL_DATA = [{"area": "MA", "owner": "Chhaya", "pm": "Turab/NewHire", "status": "USKT", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "SIF Unity parallel coming up.", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MI Ed-Fi", "owner": "", "pm": "Turab/NewHire", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MN Ed-Fi", "owner": "", "pm": "Turab/NewHire", "status": "USKT", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "BC", "owner": "", "pm": "Shereen", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "AB", "owner": "Tehzeeb", "pm": "Jessica", "status": "Not Required", "score": 80, "lwd": "", "pending": "Conformance , Current backlog, Engineering meetings", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "KS", "owner": "Chintan", "pm": "Jason*", "status": "In Process", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "Yes", "shadow": "Yes", "rd": "", "signoff": ""}, {"area": "SK", "owner": "", "pm": "Shereen", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NJ", "owner": "Alka", "pm": "ShanNita", "status": "Not Required", "score": 80, "lwd": "2026-12-31", "pending": "Ticket handling with India team by Alka", "risks": "Shannita handles all customer intercations", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "WI Ed-Fi", "owner": "", "pm": "Turab/NewHire", "status": "USKT", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "WY", "owner": "NA / Turab", "pm": "Jason*", "status": "Unknown", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "Yes", "shadow": "Yes", "rd": "", "signoff": ""}, {"area": "GA", "owner": "Prabha", "pm": "Vette *", "status": "Not Required", "score": 90, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MO", "owner": "Anuj", "pm": "Jessica / Turab", "status": "Not Required", "score": 100, "lwd": "2026-06-12", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "CEDS", "owner": "Soumya", "pm": "Ben", "status": "Continues", "score": null, "lwd": "", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MB", "owner": "", "pm": "Shereen", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "SIF, SIF Unity", "owner": "Soumya", "pm": "Ben", "status": "Continues", "score": null, "lwd": "", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "VA", "owner": "Alka", "pm": "ShanNita", "status": "Not Required", "score": 80, "lwd": "2026-12-31", "pending": "Ticket handling with India team by Alka", "risks": "Shannita handles all customer intercations", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NM", "owner": "", "pm": "Eric ->Michael", "status": "USKT", "score": 100, "lwd": "2026-12-31", "pending": "Eric -> Micheal", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "OK", "owner": "Anuj", "pm": "Turab/NewHire", "status": "USKT", "score": 100, "lwd": "2026-06-12", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "VT", "owner": "Ajish", "pm": "Vette/Newhire", "status": "Not Started", "score": 90, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "risks": "", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "PA", "owner": "Alka", "pm": "ShanNita", "status": "Not Required", "score": 80, "lwd": "2026-12-31", "pending": "Ticket handling with India team by Alka", "risks": "Shannita handles all customer intercations", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "ID", "owner": "Soumya", "pm": "Michael", "status": "Not Started", "score": 20, "lwd": "", "pending": "All", "risks": "", "sw": "No", "shadow": "No", "rd": "No", "signoff": "No"}, {"area": "UDC", "owner": "Tehzeeb", "pm": "", "status": "Continues", "score": null, "lwd": "", "pending": "Not planned", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "TX(esp)", "owner": "Rajesh (eSP)", "pm": "Fred", "status": "Not Required", "score": 100, "lwd": "2026-07-03", "pending": "Had a discussion with Debra! MD will be taken by Prashu and Debra and PA will be taken by Fred. Have a sync up call on 18th May to discuss. In a nutshell KT not required.", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "UT", "owner": "Soumya", "pm": "Michael", "status": "Not Started", "score": 100, "lwd": "", "pending": "July - Micheal is yet to start customer calls or ticket handling", "risks": "Utah backpack live date is end of May and is at risk", "sw": "No", "shadow": "yes", "rd": "No", "signoff": "No"}, {"area": "MS", "owner": "Anuj", "pm": "Jessica/Caron*", "status": "Not Required", "score": 100, "lwd": "2026-06-12", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "ON", "owner": "", "pm": "Shereen", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MD", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MN", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "ME", "owner": "Alka", "pm": "ShanNita", "status": "Not Required", "score": 80, "lwd": "2026-12-31", "pending": "Ticket handling with India team by Alka", "risks": "Shannita handles all customer intercations", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "IA", "owner": "Ankit", "pm": "Fred/Newhire", "status": "Not Required", "score": 70, "lwd": "2026-12-31", "pending": "Sif Unity, IA current backlog and future commitments", "risks": "Sif Unity yearcoming up.", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "ND", "owner": "Ankit", "pm": "Fred", "status": "Not Required", "score": null, "lwd": "2026-12-31", "pending": "", "risks": "End of support from June -26", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "MT", "owner": "Chintan", "pm": "Michael", "status": "Not Started", "score": 20, "lwd": "2026-12-31", "pending": "Micheal will start from Q3/Q4", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "FL (esp )", "owner": "Himanshu", "pm": "", "status": "Not Started", "score": 0, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NY", "owner": "Himanshu", "pm": "Shereen/NewHire", "status": "Not Started", "score": 0, "lwd": "2026-12-31", "pending": "", "risks": "No plan", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "CA(esp)", "owner": "Rohan (eSP)", "pm": "Prashu", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "Prashu gave this to Rohan few months back and its given back.", "risks": "", "sw": "Done", "shadow": "Done", "rd": "", "signoff": "Done"}, {"area": "MD(esp)", "owner": "Rajesh (eSP)", "pm": "Prashu", "status": "Completed", "score": 100, "lwd": "2026-07-03", "pending": "completed", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": "Done"}, {"area": "NJ(esp)", "owner": "Rajesh (eSP)", "pm": "Prashu", "status": "Completed", "score": 100, "lwd": "2026-07-03", "pending": "Prashu gave this to Rajesh few months back and its now coming back", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": "Done"}, {"area": "NY", "owner": "Rohan", "pm": "Prashu", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "Prashu gave this to Rohan few months back and its given back.", "risks": "", "sw": "Done", "shadow": "Done", "rd": "", "signoff": "Done"}, {"area": "OR", "owner": "Rohan (eSP)", "pm": "Prashu", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "Prashu Already handling OR state since Feb 2026", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "PA", "owner": "Rajesh (eSP)", "pm": "Fred", "status": "Not Required", "score": 100, "lwd": "2026-07-03", "pending": "completed", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": "Done"}, {"area": "CRDC", "owner": "Rohan (eSP)", "pm": "", "status": "Unknown", "score": null, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "IL(esp)", "owner": "Rohan (eSP)", "pm": "New Hire", "status": "Not Started", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MA(esp)", "owner": "Rohan (eSP)", "pm": "", "status": "Unknown", "score": null, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "OH(esp)", "owner": "Rohan (eSP)", "pm": "", "status": "Unknown", "score": null, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "VA(esp)", "owner": "Rohan (eSP)", "pm": "", "status": "Unknown", "score": null, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "WA(esp)", "owner": "Rohan (eSP)", "pm": "", "status": "Not Required", "score": null, "lwd": "2026-12-31", "pending": "Only till June 26", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "LA", "owner": "Sivaprasad", "pm": "Caron*", "status": "Not Started", "score": 50, "lwd": "2026-12-31", "pending": "Everything", "risks": "", "sw": "", "shadow": "No", "rd": "No", "signoff": "No"}, {"area": "WA", "owner": "Sivaprasad", "pm": "Dan*", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "Done", "shadow": "Done", "rd": "Done", "signoff": ""}, {"area": "CO", "owner": "Smitha", "pm": "Jason*", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "Done", "shadow": "Done", "rd": "Done", "signoff": ""}, {"area": "CT", "owner": "Tehzeeb", "pm": "Jessica", "status": "Not Started", "score": 100, "lwd": "", "pending": "Backlog\nRecent development", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "IL", "owner": "Tehzeeb", "pm": "Jessica", "status": "Not Started", "score": 0, "lwd": "", "pending": "Not planned", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "OR", "owner": "Prashu", "pm": "Dan*", "status": "Completed", "score": 100, "lwd": "", "pending": "", "risks": "", "sw": "Done", "shadow": "Done", "rd": "", "signoff": ""}, {"area": "AK", "owner": "Alka", "pm": "Dan*", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "Dan handles all customer intercations", "sw": "Done", "shadow": "Done", "rd": "", "signoff": ""}, {"area": "MI", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NH", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "OH", "owner": "", "pm": "Meta", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "RI", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "WI", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "AZ", "owner": "Prashu", "pm": "Dan*", "status": "Completed", "score": 100, "lwd": "", "pending": "", "risks": "", "sw": "Done", "shadow": "Done", "rd": "", "signoff": ""}, {"area": "IN", "owner": "Himanshu", "pm": "Caron*", "status": "In Process", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "Caron will start running the calls from Aug.", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NE", "owner": "Chintan", "pm": "Turab/ Caron*", "status": "Not Started", "score": 20, "lwd": "2026-12-31", "pending": "KT not started", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "CA", "owner": "Sivaprasad", "pm": "Jason*", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "Day  to Day Backlog management and sprint planning. Customer Introduction", "risks": "", "sw": "Yes", "shadow": "No", "rd": "No", "signoff": "No"}, {"area": "AL", "owner": "Smitha", "pm": "Debra", "status": "Not Required", "score": 80, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "FL (SIS)", "owner": "Himanshu", "pm": "Debra", "status": "Not Required", "score": null, "lwd": "2026-12-31", "pending": "Closure meeting  with current / pending backlog", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "SC", "owner": "Ajish", "pm": "Vette", "status": "Not Required", "score": 90, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "risks": "", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "TN", "owner": "Ajish", "pm": "Vette", "status": "Not Required", "score": 90, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "risks": "", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "TX", "owner": "Ankit", "pm": "Fred", "status": "Not Required", "score": 80, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "risks": "26-27 Requirements", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "Ed-fi, DEX", "owner": "Soumya", "pm": "Ben", "status": "Continues", "score": null, "lwd": "", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}];
+var META = {"status_counts": {"USKT": 5, "Not Required": 30, "In Process": 2, "Unknown": 5, "Continues": 4, "Not Started": 11, "Completed": 11}, "avg_scores": {"USKT": 100, "Not Required": 93, "In Process": 100, "Unknown": 100, "Not Started": 45, "Completed": 100}, "owners": ["Ajish", "Alka", "Ankit", "Anuj", "Chhaya", "Chintan", "Himanshu", "NA / Turab", "Prabha", "Prashu", "Rajesh (eSP)", "Rohan", "Rohan (eSP)", "Sivaprasad", "Smitha", "Soumya", "Tehzeeb"], "checklist": [[10, 2, 6], [10, 3, 6], [2, 4, 0], [5, 4, 0]], "owner_rows": {"Ajish": [0, 0, 1, 2, 0, 0, 0], "Alka": [1, 0, 0, 4, 0, 0, 0], "Ankit": [0, 0, 0, 3, 0, 0, 0], "Anuj": [0, 0, 0, 2, 1, 0, 0], "Chhaya": [0, 0, 0, 0, 1, 0, 0], "Chintan": [0, 1, 2, 0, 0, 0, 0], "Himanshu": [0, 1, 2, 1, 0, 0, 0], "NA / Turab": [0, 0, 0, 0, 0, 0, 1], "Prabha": [0, 0, 0, 1, 0, 0, 0], "Prashu": [2, 0, 0, 0, 0, 0, 0], "Rajesh (eSP)": [2, 0, 0, 2, 0, 0, 0], "Rohan": [1, 0, 0, 0, 0, 0, 0], "Rohan (eSP)": [2, 0, 1, 1, 0, 0, 4], "Sivaprasad": [2, 0, 1, 0, 0, 0, 0], "Smitha": [1, 0, 0, 1, 0, 0, 0], "Soumya": [0, 0, 2, 0, 0, 3, 0], "Tehzeeb": [0, 0, 2, 1, 0, 1, 0]}, "all_statuses": ["Completed", "In Process", "Not Started", "Not Required", "USKT", "Continues", "Unknown"], "total": 68, "area_status": {"MA": "USKT", "MI Ed-Fi": "Not Required", "MN Ed-Fi": "USKT", "BC": "Not Required", "AB": "Not Required", "KS": "In Process", "SK": "Not Required", "NJ": "Not Required", "WI Ed-Fi": "USKT", "WY": "Unknown", "GA": "Not Required", "MO": "Not Required", "CEDS": "Continues", "MB": "Not Required", "SIF, SIF Unity": "Continues", "VA": "Not Required", "NM": "USKT", "OK": "USKT", "VT": "Not Started", "PA": "Not Required", "ID": "Not Started", "UDC": "Continues", "TX(esp)": "Not Required", "UT": "Not Started", "MS": "Not Required", "ON": "Not Required", "MD": "Not Required", "MN": "Not Required", "ME": "Not Required", "IA": "Not Required", "ND": "Not Required", "MT": "Not Started", "FL (esp )": "Not Started", "NY": "Not Started", "CA(esp)": "Completed", "MD(esp)": "Completed", "NJ(esp)": "Completed", "OR": "Completed", "CRDC": "Unknown", "IL(esp)": "Not Started", "MA(esp)": "Unknown", "OH(esp)": "Unknown", "VA(esp)": "Unknown", "WA(esp)": "Not Required", "LA": "Not Started", "WA": "Completed", "CO": "Completed", "CT": "Not Started", "IL": "Not Started", "AK": "Completed", "MI": "Not Required", "NH": "Not Required", "OH": "Not Required", "RI": "Not Required", "WI": "Not Required", "AZ": "Completed", "IN": "In Process", "NE": "Not Started", "CA": "Completed", "AL": "Not Required", "FL (SIS)": "Not Required", "SC": "Not Required", "TN": "Not Required", "TX": "Not Required", "Ed-fi, DEX": "Continues"}};
 
-var STATUS_COLORS = {
-  'Completed':   '#3B6D11',
-  'In Process':  '#D97706',
-  'Not Started': '#DC2626',
-  'Not Required':'#2563EB',
-  'USKT':        '#0D9488',
-  'Continues':   '#7C3AED',
-  'Unknown':     '#6B7280',
-};
 var ALL_STATUSES = ['Completed','In Process','Not Started','Not Required','USKT','Continues','Unknown'];
+var STATUS_COLORS = {'Completed':'#3B6D11','In Process':'#D97706','Not Started':'#DC2626','Not Required':'#2563EB','USKT':'#0D9488','Continues':'#7C3AED','Unknown':'#6B7280'};
+var STATUS_PRI    = {'Not Started':0,'In Process':1,'Unknown':2,'Continues':3,'USKT':4,'Completed':5,'Not Required':6};
 
-// ── DONUT LEGEND ──
-(function() {
-  var lg = document.getElementById('donutLegend');
-  ALL_STATUSES.forEach(function(s) {
-    var cnt = META.status_counts[s] || 0;
-    var d = document.createElement('div'); d.className = 'legend-dot';
-    d.innerHTML = '<span style="background:'+STATUS_COLORS[s]+'"></span>'+s+' ('+cnt+')';
-    lg.appendChild(d);
+// Column definitions — display values for select columns
+var COL_DEFS = [
+  {key:'area',    label:'Area',          type:'select'},
+  {key:'owner',   label:'India PM',      type:'select'},
+  {key:'pm',      label:'Receiving PM',  type:'select'},
+  {key:'status',  label:'Status',        type:'select'},
+  {key:'score',   label:'Readiness',     type:'select', displayFn: function(v){ return v===null||v===''?'—':v+'%'; }, rawKey:'score'},
+  {key:'lwd',     label:'Last WD',       type:'select', displayFn: function(v){ return fmtLwd(v); }},
+  {key:'sw',      label:'SW',            type:'select'},
+  {key:'shadow',  label:'Shadow',        type:'select'},
+  {key:'signoff', label:'Signoff',       type:'select'},
+  {key:'pending', label:'Pending/Notes', type:'text'},
+];
+
+var US_STATES_LIST = ["AK", "AL", "AZ", "CA", "CA(esp)", "CO", "CT", "FL", "FL (SIS)", "FL (esp )", "GA", "IA", "ID", "IL", "IL(esp)", "IN", "KS", "LA", "MA", "MA(esp)", "MD", "MD(esp)", "ME", "MI", "MN", "MO", "MS", "MT", "ND", "NE", "NH", "NJ", "NJ(esp)", "NM", "NY", "OH", "OH(esp)", "OK", "OR", "PA", "RI", "SC", "TN", "TX", "TX(esp)", "UT", "VA", "VA(esp)", "VT", "WA", "WA(esp)", "WI", "WY"];
+var CANADA_LIST    = ["AB", "BC", "MB", "ON", "SK"];
+var SPECIAL_LIST   = ["CEDS", "CRDC", "Ed-fi, DEX", "MI Ed-Fi", "MN Ed-Fi", "SIF, SIF Unity", "UDC", "WI Ed-Fi"];
+
+// ── GLOBAL STATE ──
+var selectedAreas = new Set();
+var activeStatus  = null;
+var colFilters    = {};   // key -> Set of raw string values (select) OR string (text) var openColKey    = null; // currently open column filter key
+
+// ── AREA STATUS MAP ──
+var AREA_STATUS = (function(){
+  var map = {};
+  ALL_DATA.forEach(function(r){
+    if(!r.area) return;
+    if(map[r.area]===undefined || STATUS_PRI[r.status] < STATUS_PRI[map[r.area]])
+      map[r.area] = r.status;
   });
+  return map;
 })();
 
-// ── DONUT CHART ──
-var donutData = ALL_STATUSES.map(function(s){ return META.status_counts[s] || 0; });
-var donutChart = new Chart(document.getElementById('donutChart'), {
-  type: 'doughnut',
-  data: {
-    labels: ALL_STATUSES,
-    datasets: [{
-      data: donutData,
-      backgroundColor: ALL_STATUSES.map(function(s){ return STATUS_COLORS[s]; }),
-      borderWidth: 3,
-      borderColor: '#ffffff',
-      hoverOffset: 10,
-      offset: new Array(ALL_STATUSES.length).fill(0),
-    }]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    cutout: '62%',
-    plugins: {
-      legend: { display: false },
-      tooltip: { callbacks: { label: function(ctx) { return '  ' + ctx.label + ': ' + ctx.raw; } } }
-    },
-    onClick: function(evt, elements) {
-      if (!elements.length) { clearFilter(); return; }
-      var label = ALL_STATUSES[elements[0].index];
-      if (activeStatus === label) { clearFilter(); }
-      else { applyFilter(label); }
-    },
-    onHover: function(evt, els) { evt.native.target.style.cursor = els.length ? 'pointer' : 'default'; }
-  }
-});
-
-// ── READINESS CHART ──
-var readLabels = [], readVals = [], readColors = [];
-ALL_STATUSES.forEach(function(s) {
-  if (META.avg_scores[s] !== undefined) {
-    readLabels.push(s); readVals.push(META.avg_scores[s]); readColors.push(STATUS_COLORS[s]);
-  }
-});
-new Chart(document.getElementById('readinessChart'), {
-  type: 'bar',
-  data: { labels: readLabels, datasets: [{ data: readVals, backgroundColor: readColors, borderRadius: 6, barThickness: 28 }] },
-  options: {
-    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-    plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(c){ return ' '+c.raw+'%'; } } } },
-    scales: {
-      x: { min:0, max:110, ticks: { callback: function(v){return v+'%';}, font:{size:11}, color:'#A1A1AA' }, grid: { color:'rgba(0,0,0,0.05)' } },
-      y: { ticks: { font:{size:12}, color:'#52525B' }, grid: { display:false } }
-    }
-  }
-});
-
-// ── CHECKLIST CHART ──
-var CL = META.checklist;
-new Chart(document.getElementById('checklistChart'), {
-  type: 'bar',
-  data: {
-    labels: ['State Walkthrough','Shadowing','Reverse Demo','Receiver Signoff'],
-    datasets: [
-      { label:'Done/Yes',    data: CL.map(function(c){return c[0];}), backgroundColor:'#3B6D11', borderRadius:4, barThickness:20 },
-      { label:'No/Pending',  data: CL.map(function(c){return c[1];}), backgroundColor:'#DC2626', borderRadius:4, barThickness:20 },
-      { label:'Not required',data: CL.map(function(c){return c[2];}), backgroundColor:'#A1A1AA', borderRadius:4, barThickness:20 },
-    ]
-  },
-  options: {
-    responsive:true, maintainAspectRatio:false,
-    plugins:{ legend:{ display:false } },
-    scales:{
-      x:{ ticks:{font:{size:10},color:'#A1A1AA',maxRotation:10},grid:{display:false} },
-      y:{ ticks:{font:{size:11},color:'#A1A1AA'},grid:{color:'rgba(0,0,0,0.05)'} }
-    }
-  }
-});
-
-// ── OWNER CHART ──
-var owners = META.owners;
-new Chart(document.getElementById('ownerChart'), {
-  type: 'bar',
-  data: {
-    labels: owners,
-    datasets: ALL_STATUSES.map(function(s) {
-      return {
-        label: s,
-        data: owners.map(function(o) { return (META.owner_rows[o] || [])[META.all_statuses.indexOf(s)] || 0; }),
-        backgroundColor: STATUS_COLORS[s],
-        borderRadius: 3,
-        barThickness: 14,
-      };
-    })
-  },
-  options: {
-    responsive:true, maintainAspectRatio:false,
-    plugins:{ legend:{ display:false } },
-    scales:{
-      x:{ stacked:true, ticks:{font:{size:9},color:'#A1A1AA',maxRotation:40},grid:{display:false} },
-      y:{ stacked:true, ticks:{font:{size:10},color:'#A1A1AA'},grid:{color:'rgba(0,0,0,0.05)'} }
-    }
-  }
-});
-
-// ── TABLE RENDER ──
-function scoreColor(s) {
-  if (s===null) return '#A1A1AA';
-  return s>=80?'#3B6D11':s>=50?'#D97706':'#DC2626';
-}
-function dotIcon(v) {
-  if (!v) return '<span class="dot-na">—</span>';
-  var vl = v.toLowerCase().trim();
-  if (vl==='done'||vl==='yes') return '<span class="dot-yes">&#10003;</span>';
-  if (vl==='no') return '<span class="dot-no">&#10007;</span>';
-  if (vl.includes('not required')) return '<span class="dot-nr">N/R</span>';
-  return '<span class="dot-na">—</span>';
-}
-function badgeClass(s) { return 'badge b-'+s.replace(/ /g,'-'); }
-function fmtLwd(v) {
-  if (!v||v.length<7) return '—';
-  if (v.startsWith('2026-12-31')) return 'Dec 31';
+// ── DISPLAY HELPERS ──
+function fmtLwd(v){
+  if(!v||v.length<7) return '—';
+  if(v==='2026-12-31') return 'Dec 31';
   return v.slice(5).replace('-','/');
 }
+function scoreColor(s){ return s===null?'#A1A1AA':s>=80?'#3B6D11':s>=50?'#D97706':'#DC2626'; }
+function dotIcon(v){
+  if(!v) return '<span class="dot-na">—</span>';
+  var vl=v.toLowerCase().trim();
+  if(vl==='done'||vl==='yes') return '<span class="dot-yes">&#10003;</span>';
+  if(vl==='no')                return '<span class="dot-no">&#10007;</span>';
+  if(vl.includes('not required')) return '<span class="dot-nr">N/R</span>';
+  return '<span class="dot-na">—</span>';
+}
+function bclass(s){ return 'badge b-'+s.replace(/ /g,'-'); }
+function abCls(s)  { return 'ab-'+(s||'Unknown').replace(/ /g,'-'); }
 
-function renderTable(data) {
-  var tbody = document.getElementById('tableBody');
-  var empty = document.getElementById('emptyState');
-  var count = document.getElementById('rowCount');
-  tbody.innerHTML = '';
-  count.textContent = data.length + ' item' + (data.length!==1?'s':'');
-  if (!data.length) { empty.style.display='block'; return; }
+// ── GET UNIQUE VALUES for a column (raw values from data) ──
+function getUniqVals(colDef){
+  var seen = {};
+  ALL_DATA.forEach(function(r){
+    var raw = r[colDef.key];
+    var display = colDef.displayFn ? colDef.displayFn(raw) : String(raw===null||raw===undefined?'':raw);
+    var key = String(raw===null||raw===undefined?'':raw); // store raw as key
+    if(key!=='' || display!=='—') seen[key] = display;
+  });
+  // Sort by display value
+  var pairs = Object.keys(seen).map(function(k){ return {raw:k, display:seen[k]}; });
+  pairs.sort(function(a,b){ return a.display.localeCompare(b.display); });
+  return pairs;
+}
+
+// ── PORTAL DROPDOWN ──
+var portalEl      = document.getElementById('cfPortal');
+var portalContent = document.getElementById('cfPortalContent');
+
+function openPortal(colDef, btnEl){
+  // Close if same column re-clicked
+  if(openColKey === colDef.key){ closePortal(); return; }
+  openColKey = colDef.key;
+  updateFilterBtnStyles();
+
+  var type = colDef.type;
+  portalContent.innerHTML = '';
+
+  if(type === 'select'){
+    var pairs = getUniqVals(colDef);
+    var curSet = colFilters[colDef.key] instanceof Set ? colFilters[colDef.key] : new Set();
+
+    // Search input
+    var srch = document.createElement('input');
+    srch.className='cf-search'; srch.placeholder='Search…';
+    srch.addEventListener('mousedown', function(e){ e.stopPropagation(); });
+    srch.addEventListener('input', function(){
+      var q=srch.value.toLowerCase();
+      portalContent.querySelectorAll('.cf-opt').forEach(function(o){
+        o.style.display = o.dataset.display.toLowerCase().includes(q) ? '' : 'none';
+      });
+    });
+    portalContent.appendChild(srch);
+
+    // Options
+    var ow = document.createElement('div'); ow.className='cf-opts';
+    pairs.forEach(function(p){
+      var div=document.createElement('div'); div.className='cf-opt';
+      div.dataset.raw=p.raw; div.dataset.display=p.display;
+      var cb=document.createElement('input'); cb.type='checkbox';
+      cb.checked = curSet.has(p.raw);
+      var lbl=document.createElement('label'); lbl.textContent=p.display||'(blank)';
+      div.appendChild(cb); div.appendChild(lbl);
+      div.addEventListener('mousedown', function(e){
+        e.preventDefault(); e.stopPropagation();
+        cb.checked = !cb.checked;
+      });
+      ow.appendChild(div);
+    });
+    portalContent.appendChild(ow);
+
+    // Footer
+    var ft=document.createElement('div'); ft.className='cf-foot';
+    var clr=document.createElement('button'); clr.className='cf-clear-col'; clr.textContent='Clear';
+    clr.addEventListener('mousedown',function(e){
+      e.preventDefault(); e.stopPropagation();
+      delete colFilters[colDef.key];
+      closePortal(); refresh();
+    });
+    var ap=document.createElement('button'); ap.className='cf-apply'; ap.textContent='Apply';
+    ap.addEventListener('mousedown',function(e){
+      e.preventDefault(); e.stopPropagation();
+      var checked=Array.from(portalContent.querySelectorAll('.cf-opt input:checked'))
+        .map(function(c){ return c.closest('.cf-opt').dataset.raw; });
+      if(checked.length) colFilters[colDef.key]=new Set(checked);
+      else delete colFilters[colDef.key];
+      closePortal(); refresh();
+    });
+    ft.appendChild(clr); ft.appendChild(ap);
+    portalContent.appendChild(ft);
+    setTimeout(function(){ srch.focus(); }, 30);
+
+  } else {
+    // Text search
+    var cur = typeof colFilters[colDef.key]==='string' ? colFilters[colDef.key] : '';
+    var ti=document.createElement('input'); ti.className='cf-search';
+    ti.placeholder='Type to search…'; ti.value=cur; ti.style.borderBottom='none';
+    ti.addEventListener('mousedown',function(e){ e.stopPropagation(); });
+    ti.addEventListener('keydown',function(e){
+      if(e.key==='Enter'){ applyTextFilter(colDef.key, ti.value); }
+    });
+    portalContent.appendChild(ti);
+    var ft2=document.createElement('div'); ft2.className='cf-foot';
+    var clr2=document.createElement('button'); clr2.className='cf-clear-col'; clr2.textContent='Clear';
+    clr2.addEventListener('mousedown',function(e){
+      e.preventDefault(); e.stopPropagation();
+      delete colFilters[colDef.key]; closePortal(); refresh();
+    });
+    var ap2=document.createElement('button'); ap2.className='cf-apply'; ap2.textContent='Apply';
+    ap2.addEventListener('mousedown',function(e){
+      e.preventDefault(); e.stopPropagation();
+      applyTextFilter(colDef.key, ti.value);
+    });
+    ft2.appendChild(clr2); ft2.appendChild(ap2);
+    portalContent.appendChild(ft2);
+    setTimeout(function(){ ti.focus(); }, 30);
+  }
+
+  // Position portal below the button
+  positionPortal(btnEl);
+  portalEl.classList.add('open');
+}
+
+function positionPortal(btnEl){
+  var rect = btnEl.getBoundingClientRect();
+  var pW = 220;
+  var left = rect.left;
+  if(left + pW > window.innerWidth - 8) left = window.innerWidth - pW - 8;
+  portalEl.style.top  = (rect.bottom + 4) + 'px';
+  portalEl.style.left = left + 'px';
+  portalEl.style.width = pW + 'px';
+}
+
+function closePortal(){
+  portalEl.classList.remove('open');
+  openColKey = null;
+  updateFilterBtnStyles();
+}
+
+function applyTextFilter(key, val){
+  if(val.trim()) colFilters[key]=val.trim(); else delete colFilters[key];
+  closePortal(); refresh();
+}
+
+// Close portal on outside click
+document.addEventListener('mousedown', function(e){
+  if(openColKey && !portalEl.contains(e.target)){
+    var btn = document.getElementById('cfbtn-'+openColKey);
+    if(btn && btn.contains(e.target)) return; // handled by button click
+    closePortal();
+  }
+});
+window.addEventListener('scroll', closePortal, true);
+window.addEventListener('resize', function(){ if(openColKey) closePortal(); });
+
+// ── BUILD THEAD ONCE ──
+function buildThead(){
+  var tr=document.getElementById('theadRow');
+  tr.innerHTML='';
+  COL_DEFS.forEach(function(col){
+    var th=document.createElement('th');
+    var wrap=document.createElement('div'); wrap.className='th-wrap';
+    var lbl=document.createElement('span'); lbl.className='th-label'; lbl.textContent=col.label;
+    var btn=document.createElement('button');
+    btn.className='cf-btn'; btn.id='cfbtn-'+col.key;
+    btn.innerHTML='&#9660;';
+    btn.title='Filter '+col.label;
+    btn.addEventListener('click',function(e){
+      e.stopPropagation();
+      openPortal(col, btn);
+    });
+    wrap.appendChild(lbl); wrap.appendChild(btn);
+    th.appendChild(wrap);
+    tr.appendChild(th);
+  });
+}
+
+function updateFilterBtnStyles(){
+  COL_DEFS.forEach(function(col){
+    var btn=document.getElementById('cfbtn-'+col.key);
+    if(!btn) return;
+    var hasF = colFilters[col.key] &&
+      ((colFilters[col.key] instanceof Set && colFilters[col.key].size>0) ||
+       (typeof colFilters[col.key]==='string' && colFilters[col.key].trim()));
+    btn.classList.toggle('active-filter', !!hasF);
+    btn.innerHTML = hasF ? '&#9660;&#9679;' : '&#9660;';
+  });
+}
+
+// ── FILTERING ──
+function getFiltered(){
+  return ALL_DATA.filter(function(r){
+    if(selectedAreas.size>0 && !selectedAreas.has(r.area)) return false;
+    if(activeStatus && r.status!==activeStatus) return false;
+    for(var k in colFilters){
+      var fv=colFilters[k];
+      if(!fv||(fv instanceof Set&&fv.size===0)) continue;
+      // raw value from data
+      var rawVal = r[k];
+      var rawStr = String(rawVal===null||rawVal===undefined?'':rawVal);
+      if(fv instanceof Set){
+        // Compare raw stored value against Set of raw values
+        if(!fv.has(rawStr)) return false;
+      } else if(typeof fv==='string'&&fv.trim()){
+        if(!rawStr.toLowerCase().includes(fv.trim().toLowerCase())) return false;
+      }
+    }
+    return true;
+  });
+}
+
+// ── RENDER TABLE ──
+function renderTable(data){
+  var tbody=document.getElementById('tableBody');
+  var empty=document.getElementById('emptyState');
+  var count=document.getElementById('rowCount');
+  var clearBtn=document.getElementById('clearAllBtn');
+  tbody.innerHTML='';
+  count.textContent=data.length+' item'+(data.length!==1?'s':'');
+  var hasAny=selectedAreas.size>0||activeStatus||Object.keys(colFilters).length>0;
+  clearBtn.style.display=hasAny?'inline-block':'none';
+  if(!data.length){empty.style.display='block';return;}
   empty.style.display='none';
-  data.forEach(function(r) {
-    var sc = r.score;
-    var col = scoreColor(sc);
-    var scoreHtml = sc!==null
-      ? '<div class="score-wrap"><div class="score-bar"><div class="score-fill" style="width:'+Math.min(sc,100)+'%;background:'+col+'"></div></div><span class="score-num" style="color:'+col+'">'+sc+'%</span></div>'
-      : '<span style="color:#D1D5DB;font-size:11px">—</span>';
-    var pending = (r.pending||'').replace(/\n/g,' ');
-    var tr = document.createElement('tr');
-    tr.innerHTML =
+  data.forEach(function(r){
+    var sc=r.score; var col=scoreColor(sc);
+    var sf=sc!==null
+      ?'<div class="score-wrap"><div class="score-bar"><div class="score-fill" style="width:'+Math.min(sc,100)+'%;background:'+col+'"></div></div><span class="score-num" style="color:'+col+'">'+sc+'%</span></div>'
+      :'<span class="dot-na">—</span>';
+    var pending=(r.pending||'').replace(/\n/g,' ');
+    var tr=document.createElement('tr');
+    tr.innerHTML=
       '<td style="font-weight:600">'+r.area+'</td>'+
       '<td>'+(r.owner||'—')+'</td>'+
-      '<td style="color:#52525B">'+(r.pm||'—')+'</td>'+
-      '<td><span class="'+badgeClass(r.status)+'">'+r.status+'</span></td>'+
-      '<td>'+scoreHtml+'</td>'+
-      '<td style="color:#A1A1AA;font-size:11px;font-family:monospace">'+fmtLwd(r.lwd)+'</td>'+
+      '<td style="color:var(--text2)">'+(r.pm||'—')+'</td>'+
+      '<td><span class="'+bclass(r.status)+'">'+r.status+'</span></td>'+
+      '<td>'+sf+'</td>'+
+      '<td style="color:var(--text3);font-size:11px">'+fmtLwd(r.lwd)+'</td>'+
       '<td style="text-align:center">'+dotIcon(r.sw)+'</td>'+
       '<td style="text-align:center">'+dotIcon(r.shadow)+'</td>'+
       '<td style="text-align:center">'+dotIcon(r.signoff)+'</td>'+
-      '<td style="color:#52525B;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+pending.replace(/"/g,"'")+'">'+( pending||'—')+'</td>';
+      '<td style="color:var(--text2)" title="'+pending.replace(/"/g,"&quot;")+'">'+( pending||'—')+'</td>';
     tbody.appendChild(tr);
   });
 }
 
-// ── FILTER LOGIC ──
-function applyFilter(status) {
-  activeStatus = status;
-  // badge
-  document.getElementById('filterLabel').textContent = status;
-  document.getElementById('filterBadge').style.display = 'inline-flex';
-  // stat cards
-  document.querySelectorAll('.stat-card').forEach(function(c) {
-    c.classList.toggle('active', c.dataset.s === status);
-    c.style.opacity = c.dataset.s === status ? '1' : '0.5';
+// ── RENDER CHIPS ──
+function renderChips(){
+  var left=document.getElementById('toolbarLeft');
+  left.querySelectorAll('.col-chip').forEach(function(c){c.remove();});
+  if(selectedAreas.size>0){
+    var chip=document.createElement('span');chip.className='col-chip';
+    var desc=selectedAreas.size===1?Array.from(selectedAreas)[0]:selectedAreas.size+' areas';
+    chip.innerHTML='Area: <strong>'+desc+'</strong>';
+    var rm=document.createElement('button');rm.innerHTML='&times;';rm.onclick=clearAreaFilter;
+    chip.appendChild(rm);left.appendChild(chip);
+  }
+  Object.keys(colFilters).forEach(function(key){
+    var fv=colFilters[key];
+    var cd=COL_DEFS.find(function(c){return c.key===key;})||{label:key};
+    var desc;
+    if(fv instanceof Set){
+      // show display values not raw
+      var colDef=COL_DEFS.find(function(c){return c.key===key;});
+      desc=Array.from(fv).map(function(raw){
+        return colDef&&colDef.displayFn?colDef.displayFn(raw===''?null:isNaN(raw)?raw:Number(raw)):raw||'(blank)';
+      }).join(', ');
+    } else { desc=fv; }
+    var chip=document.createElement('span');chip.className='col-chip';
+    chip.innerHTML=cd.label+': <strong>'+desc+'</strong>';
+    var rm=document.createElement('button');rm.innerHTML='&times;';
+    rm.addEventListener('click',function(){delete colFilters[key];refresh();});
+    chip.appendChild(rm);left.appendChild(chip);
   });
-  // donut pop
-  var offsets = ALL_STATUSES.map(function(s,i) { return s===status ? 16 : 0; });
-  donutChart.data.datasets[0].offset = offsets;
-  donutChart.update();
-  // table
-  renderTable(ALL_DATA.filter(function(r){ return r.status===status; }));
-  document.getElementById('tableBody').closest('.table-card').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
-function clearFilter() {
-  activeStatus = null;
-  document.getElementById('filterBadge').style.display = 'none';
-  document.querySelectorAll('.stat-card').forEach(function(c) { c.classList.remove('active'); c.style.opacity='1'; });
-  donutChart.data.datasets[0].offset = new Array(ALL_STATUSES.length).fill(0);
-  donutChart.update();
-  renderTable(ALL_DATA);
+function refresh(){
+  updateFilterBtnStyles();
+  renderChips();
+  renderTable(getFiltered());
 }
 
-// stat card clicks
-document.querySelectorAll('.stat-card').forEach(function(card) {
-  card.addEventListener('click', function() {
-    var s = card.dataset.s;
-    if (activeStatus === s) clearFilter();
-    else applyFilter(s);
+// ── STATUS FILTER ──
+function applyStatusFilter(status){
+  activeStatus=status;
+  document.getElementById('statusChipLabel').textContent=status;
+  document.getElementById('statusChip').style.display='inline-flex';
+  document.querySelectorAll('.stat-card').forEach(function(c){
+    c.classList.toggle('active',c.dataset.s===status);
+    c.style.opacity=c.dataset.s===status?'1':'0.5';
+  });
+  donutChart.data.datasets[0].offset=ALL_STATUSES.map(function(s){return s===status?16:0;});
+  donutChart.update();
+  refresh();
+  document.querySelector('.table-card').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function clearStatusFilter(){
+  activeStatus=null;
+  document.getElementById('statusChip').style.display='none';
+  document.querySelectorAll('.stat-card').forEach(function(c){c.classList.remove('active');c.style.opacity='1';});
+  donutChart.data.datasets[0].offset=new Array(ALL_STATUSES.length).fill(0);
+  donutChart.update();refresh();
+}
+function clearAll(){
+  selectedAreas.clear();activeStatus=null;colFilters={};
+  syncAreaBtns();
+  document.getElementById('statusChip').style.display='none';
+  document.querySelectorAll('.stat-card').forEach(function(c){c.classList.remove('active');c.style.opacity='1';});
+  donutChart.data.datasets[0].offset=new Array(ALL_STATUSES.length).fill(0);
+  donutChart.update();refresh();
+}
+document.querySelectorAll('.stat-card').forEach(function(card){
+  card.addEventListener('click',function(){
+    var s=card.dataset.s;
+    if(activeStatus===s)clearStatusFilter();else applyStatusFilter(s);
   });
 });
 
-// initial render
-renderTable(ALL_DATA);
+// ── AREA BAR ──
+function buildAreaBar(){
+  var inner=document.getElementById('areaBarInner');inner.innerHTML='';
+  var r0=document.createElement('div');r0.className='area-group-row';
+  var l0=document.createElement('span');l0.className='area-group-lbl';l0.textContent='Filter';r0.appendChild(l0);
+  var w0=document.createElement('div');w0.className='area-btns';
+  var ab=document.createElement('button');ab.className='area-btn ab-all active';ab.id='areaAllBtn';ab.textContent='All Areas';ab.onclick=clearAreaFilter;w0.appendChild(ab);
+  var cb=document.createElement('button');cb.className='area-clear-btn';cb.id='areaClearBtn';cb.textContent='Clear selection';cb.onclick=clearAreaFilter;w0.appendChild(cb);
+  r0.appendChild(w0);inner.appendChild(r0);
+  function mkGrp(lbl,areas,multi){
+    var pres=areas.filter(function(a){return AREA_STATUS[a]!==undefined;});if(!pres.length)return;
+    var row=document.createElement('div');row.className='area-group-row';
+    var l=document.createElement('span');l.className='area-group-lbl';l.textContent=lbl;row.appendChild(l);
+    var w=document.createElement('div');w.className='area-btns';
+    if(multi){var h=document.createElement('span');h.className='multi-hint';h.textContent='(multi-select)';w.appendChild(h);}
+    pres.forEach(function(a){
+      var btn=document.createElement('button');
+      btn.className='area-btn '+abCls(AREA_STATUS[a]);
+      btn.dataset.area=a;btn.textContent=a;
+      btn.title=(multi?'Multi: ':'Filter: ')+a+' — '+AREA_STATUS[a];
+      btn.onclick=function(){onAreaClick(a,multi);};w.appendChild(btn);
+    });
+    row.appendChild(w);inner.appendChild(row);
+  }
+  mkGrp('US States',US_STATES_LIST,true);
+  mkGrp('Canada',CANADA_LIST,false);
+  mkGrp('Special',SPECIAL_LIST,false);
+  var known=US_STATES_LIST.concat(CANADA_LIST).concat(SPECIAL_LIST);
+  var other=Object.keys(AREA_STATUS).filter(function(a){return known.indexOf(a)===-1;}).sort();
+  if(other.length)mkGrp('Other',other,false);
+}
+function onAreaClick(area,multi){
+  if(multi){if(selectedAreas.has(area))selectedAreas.delete(area);else selectedAreas.add(area);}
+  else{if(selectedAreas.size===1&&selectedAreas.has(area))selectedAreas.clear();else{selectedAreas.clear();selectedAreas.add(area);}}
+  syncAreaBtns();refresh();
+  if(selectedAreas.size>0)document.querySelector('.table-card').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function clearAreaFilter(){selectedAreas.clear();syncAreaBtns();refresh();}
+function syncAreaBtns(){
+  var has=selectedAreas.size>0;
+  var ab=document.getElementById('areaAllBtn');if(ab)ab.classList.toggle('active',!has);
+  var cb=document.getElementById('areaClearBtn');if(cb)cb.classList.toggle('show',has);
+  document.querySelectorAll('.area-btn[data-area]').forEach(function(b){b.classList.toggle('active',selectedAreas.has(b.dataset.area));});
+}
+
+// ── CHARTS ──
+(function(){
+  var lg=document.getElementById('donutLegend');
+  ALL_STATUSES.forEach(function(s){
+    var d=document.createElement('div');d.className='ld';
+    d.innerHTML='<span style="background:'+STATUS_COLORS[s]+'"></span>'+s+' ('+(META.status_counts[s]||0)+')';
+    lg.appendChild(d);
+  });
+})();
+var donutChart=new Chart(document.getElementById('donutChart'),{
+  type:'doughnut',
+  data:{labels:ALL_STATUSES,datasets:[{data:ALL_STATUSES.map(function(s){return META.status_counts[s]||0;}),backgroundColor:ALL_STATUSES.map(function(s){return STATUS_COLORS[s];}),borderWidth:3,borderColor:'#fff',hoverOffset:10,offset:new Array(ALL_STATUSES.length).fill(0)}]},
+  options:{responsive:true,maintainAspectRatio:false,cutout:'62%',
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return '  '+ctx.label+': '+ctx.raw;}}}},
+    onClick:function(evt,els){if(!els.length){clearStatusFilter();return;}var lbl=ALL_STATUSES[els[0].index];if(activeStatus===lbl)clearStatusFilter();else applyStatusFilter(lbl);},
+    onHover:function(evt,els){evt.native.target.style.cursor=els.length?'pointer':'default';}}
+});
+var rL=[],rV=[],rC=[];ALL_STATUSES.forEach(function(s){if(META.avg_scores[s]!==undefined){rL.push(s);rV.push(META.avg_scores[s]);rC.push(STATUS_COLORS[s]);}});
+new Chart(document.getElementById('readinessChart'),{type:'bar',data:{labels:rL,datasets:[{data:rV,backgroundColor:rC,borderRadius:6,barThickness:26}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return ' '+c.raw+'%';}}}},scales:{x:{min:0,max:110,ticks:{callback:function(v){return v+'%';},font:{size:11},color:'#A1A1AA'},grid:{color:'rgba(0,0,0,0.05)'}},y:{ticks:{font:{size:12},color:'#52525B'},grid:{display:false}}}}});
+var CL=META.checklist;
+new Chart(document.getElementById('checklistChart'),{type:'bar',data:{labels:['State Walkthrough','Shadowing','Reverse Demo','Receiver Signoff'],datasets:[{label:'Done/Yes',data:CL.map(function(c){return c[0];}),backgroundColor:'#3B6D11',borderRadius:4,barThickness:20},{label:'No/Pending',data:CL.map(function(c){return c[1];}),backgroundColor:'#DC2626',borderRadius:4,barThickness:20},{label:'Not required',data:CL.map(function(c){return c[2];}),backgroundColor:'#A1A1AA',borderRadius:4,barThickness:20}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:10},color:'#A1A1AA',maxRotation:10},grid:{display:false}},y:{ticks:{font:{size:11},color:'#A1A1AA'},grid:{color:'rgba(0,0,0,0.05)'}}}}});
+var owners=META.owners;
+new Chart(document.getElementById('ownerChart'),{type:'bar',data:{labels:owners,datasets:ALL_STATUSES.map(function(s){return{label:s,data:owners.map(function(o){return(META.owner_rows[o]||[])[META.all_statuses.indexOf(s)]||0;}),backgroundColor:STATUS_COLORS[s],borderRadius:3,barThickness:12};})},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{stacked:true,ticks:{font:{size:9},color:'#A1A1AA',maxRotation:40},grid:{display:false}},y:{stacked:true,ticks:{font:{size:10},color:'#A1A1AA'},grid:{color:'rgba(0,0,0,0.05)'}}}}});
+
+// ── BOOT ──
+buildAreaBar();
+buildThead();   // build once, never rebuild
+refresh();
 </script>
 </body>
 </html>
