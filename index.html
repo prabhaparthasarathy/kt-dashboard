@@ -101,15 +101,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Ar
 .row-count{font-size:12px;color:var(--text3);white-space:nowrap}
 .clear-all-btn{font-size:11px;padding:3px 10px;border-radius:6px;cursor:pointer;border:1px solid var(--border-md);background:none;color:var(--text2);font-family:inherit;display:none}
 .clear-all-btn:hover{background:var(--surface2)}
-table.kt{width:100%;border-collapse:collapse;font-size:12.5px;table-layout:fixed}
+table.kt{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
 table.kt thead th{text-align:left;background:var(--surface2);border-bottom:1px solid var(--border-md);white-space:nowrap;position:relative;padding:0}
-/* Fixed header row - NO rebuild on refresh */
 .th-wrap{display:flex;align-items:center;justify-content:space-between;gap:2px;padding:8px 10px}
 .th-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);flex:1;min-width:0}
 .cf-btn{flex-shrink:0;background:none;border:none;cursor:pointer;color:var(--text3);font-size:11px;padding:3px 5px;border-radius:4px;line-height:1;transition:all 0.1s}
 .cf-btn:hover{background:var(--surface3);color:var(--text)}
 .cf-btn.active-filter{color:var(--blue);font-weight:700}
-/* Dropdown portal - fixed position, appended to body */
 .cf-portal{position:fixed;z-index:9999;background:var(--surface);border:1px solid var(--border-md);border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,0.15);min-width:200px;max-width:260px;overflow:hidden;display:none}
 .cf-portal.open{display:block}
 .cf-search{width:100%;border:none;border-bottom:1px solid var(--border);padding:9px 12px;font-size:12px;font-family:inherit;outline:none;background:var(--surface2);color:var(--text)}
@@ -140,8 +138,23 @@ table.kt tbody tr:hover td{background:var(--bg)}
 .score-fill{height:100%;border-radius:3px}
 .score-num{font-size:11px;font-weight:600;font-family:'SF Mono','Fira Code',Consolas,monospace;min-width:28px;text-align:right}
 .dot-yes{color:#3B6D11;font-weight:700}.dot-no{color:#DC2626;font-weight:700}.dot-nr{color:var(--text3);font-size:10px}.dot-na{color:#D1D5DB}
+.lwd-pill{display:inline-block;padding:1px 7px;border-radius:20px;font-size:10px;font-weight:600;font-family:'SF Mono','Fira Code',Consolas,monospace;white-space:nowrap}
+.lwd-soon{background:#FEE2E2;color:#DC2626}
+.lwd-mid{background:#FEF3C7;color:#D97706}
+.lwd-far{background:#EAF3DE;color:#3B6D11}
+.lwd-na{color:var(--text3);font-size:11px}
 .empty-state{padding:48px;text-align:center;color:var(--text3);font-size:13px}
 @media(max-width:900px){.page{padding:14px}.stat-grid{grid-template-columns:repeat(4,1fr)}.charts-row{grid-template-columns:1fr}.area-bar{padding:8px 14px}}
+
+.th-wrap { cursor:pointer; }
+.th-wrap:hover { background:var(--surface3); }
+.sort-icon { flex-shrink:0; font-size:10px; color:var(--text3); margin-left:1px; user-select:none; transition:color 0.1s; }
+.sort-icon.asc::after  { content:'\25B2'; }
+.sort-icon.desc::after { content:'\25BC'; }
+.sort-icon.none::after { content:'\25B2\25BC'; opacity:0.3; }
+th.sorted-asc  .sort-icon,
+th.sorted-desc .sort-icon { color:var(--blue); }
+
 </style>
 </head>
 <body>
@@ -150,15 +163,10 @@ table.kt tbody tr:hover td{background:var(--bg)}
   <div class="header-badge">Latest data &nbsp;&middot;&nbsp; 68 product areas</div>
 </div>
 <div class="area-bar"><div class="area-bar-inner" id="areaBarInner"></div></div>
-
-<!-- single portal dropdown appended to body, reused for all columns -->
-<div class="cf-portal" id="cfPortal">
-  <div id="cfPortalContent"></div>
-</div>
-
+<div class="cf-portal" id="cfPortal"><div id="cfPortalContent"></div></div>
 <div class="page">
   <div class="section-title">Overview</div>
-  <div class="stat-grid"><div class="stat-card" data-s="Completed"><div class="sl">Completed</div><div class="sv">11</div><div class="ss">Avg 100% ready</div></div><div class="stat-card" data-s="In Process"><div class="sl">In Process</div><div class="sv">2</div><div class="ss">Avg 100% ready</div></div><div class="stat-card" data-s="Not Started"><div class="sl">Not Started</div><div class="sv">11</div><div class="ss">Avg 45% ready</div></div><div class="stat-card" data-s="Not Required"><div class="sl">Not Required</div><div class="sv">30</div><div class="ss">Avg 93% ready</div></div><div class="stat-card" data-s="USKT"><div class="sl">USKT</div><div class="sv">5</div><div class="ss">Avg 100% ready</div></div><div class="stat-card" data-s="Continues"><div class="sl">Continues</div><div class="sv">4</div><div class="ss">Ongoing</div></div><div class="stat-card" data-s="Unknown"><div class="sl">Unknown</div><div class="sv">5</div><div class="ss">TBD</div></div></div>
+  <div class="stat-grid"><div class="stat-card" data-s="Completed"><div class="sl">Completed</div><div class="sv">16</div><div class="ss">Avg 100% ready</div></div><div class="stat-card" data-s="In Process"><div class="sl">In Process</div><div class="sv">5</div><div class="ss">Avg 58% ready</div></div><div class="stat-card" data-s="Not Started"><div class="sl">Not Started</div><div class="sv">9</div><div class="ss">Avg 21% ready</div></div><div class="stat-card" data-s="Not Required"><div class="sl">Not Required</div><div class="sv">28</div><div class="ss">Avg 88% ready</div></div><div class="stat-card" data-s="USKT"><div class="sl">USKT</div><div class="sv">5</div><div class="ss">Avg 100% ready</div></div><div class="stat-card" data-s="Continues"><div class="sl">Continues</div><div class="sv">4</div><div class="ss">Ongoing</div></div><div class="stat-card" data-s="Unknown"><div class="sl">Unknown</div><div class="sv">1</div><div class="ss">TBD</div></div></div>
   <div class="charts-row">
     <div class="chart-card">
       <h3>Status Distribution</h3>
@@ -207,285 +215,277 @@ table.kt tbody tr:hover td{background:var(--bg)}
     <div style="overflow-x:auto">
       <table class="kt">
         <colgroup>
-          <col style="width:7%"><col style="width:10%"><col style="width:11%"><col style="width:10%">
-          <col style="width:8%"><col style="width:7%"><col style="width:6%"><col style="width:6%">
-          <col style="width:7%"><col style="width:28%">
+          <col style="width:6%"><col style="width:9%"><col style="width:10%"><col style="width:9%">
+          <col style="width:7%"><col style="width:8%"><col style="width:6%"><col style="width:6%">
+          <col style="width:6%"><col style="width:7%"><col style="width:26%">
         </colgroup>
-        <thead>
-          <tr id="theadRow">
-            <!-- built once by buildThead(), never rebuilt -->
-          </tr>
-        </thead>
+        <thead><tr id="theadRow"></tr></thead>
         <tbody id="tableBody"></tbody>
       </table>
       <div id="emptyState" class="empty-state" style="display:none">No items match the current filters.</div>
     </div>
   </div>
 </div>
-
 <script>
-var ALL_DATA = [{"area": "MA", "owner": "Chhaya", "pm": "Turab/NewHire", "status": "USKT", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "SIF Unity parallel coming up.", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MI Ed-Fi", "owner": "", "pm": "Turab/NewHire", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MN Ed-Fi", "owner": "", "pm": "Turab/NewHire", "status": "USKT", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "BC", "owner": "", "pm": "Shereen", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "AB", "owner": "Tehzeeb", "pm": "Jessica", "status": "Not Required", "score": 80, "lwd": "", "pending": "Conformance , Current backlog, Engineering meetings", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "KS", "owner": "Chintan", "pm": "Jason*", "status": "In Process", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "Yes", "shadow": "Yes", "rd": "", "signoff": ""}, {"area": "SK", "owner": "", "pm": "Shereen", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NJ", "owner": "Alka", "pm": "ShanNita", "status": "Not Required", "score": 80, "lwd": "2026-12-31", "pending": "Ticket handling with India team by Alka", "risks": "Shannita handles all customer intercations", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "WI Ed-Fi", "owner": "", "pm": "Turab/NewHire", "status": "USKT", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "WY", "owner": "NA / Turab", "pm": "Jason*", "status": "Unknown", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "Yes", "shadow": "Yes", "rd": "", "signoff": ""}, {"area": "GA", "owner": "Prabha", "pm": "Vette *", "status": "Not Required", "score": 90, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MO", "owner": "Anuj", "pm": "Jessica / Turab", "status": "Not Required", "score": 100, "lwd": "2026-06-12", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "CEDS", "owner": "Soumya", "pm": "Ben", "status": "Continues", "score": null, "lwd": "", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MB", "owner": "", "pm": "Shereen", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "SIF, SIF Unity", "owner": "Soumya", "pm": "Ben", "status": "Continues", "score": null, "lwd": "", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "VA", "owner": "Alka", "pm": "ShanNita", "status": "Not Required", "score": 80, "lwd": "2026-12-31", "pending": "Ticket handling with India team by Alka", "risks": "Shannita handles all customer intercations", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NM", "owner": "", "pm": "Eric ->Michael", "status": "USKT", "score": 100, "lwd": "2026-12-31", "pending": "Eric -> Micheal", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "OK", "owner": "Anuj", "pm": "Turab/NewHire", "status": "USKT", "score": 100, "lwd": "2026-06-12", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "VT", "owner": "Ajish", "pm": "Vette/Newhire", "status": "Not Started", "score": 90, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "risks": "", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "PA", "owner": "Alka", "pm": "ShanNita", "status": "Not Required", "score": 80, "lwd": "2026-12-31", "pending": "Ticket handling with India team by Alka", "risks": "Shannita handles all customer intercations", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "ID", "owner": "Soumya", "pm": "Michael", "status": "Not Started", "score": 20, "lwd": "", "pending": "All", "risks": "", "sw": "No", "shadow": "No", "rd": "No", "signoff": "No"}, {"area": "UDC", "owner": "Tehzeeb", "pm": "", "status": "Continues", "score": null, "lwd": "", "pending": "Not planned", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "TX(esp)", "owner": "Rajesh (eSP)", "pm": "Fred", "status": "Not Required", "score": 100, "lwd": "2026-07-03", "pending": "Had a discussion with Debra! MD will be taken by Prashu and Debra and PA will be taken by Fred. Have a sync up call on 18th May to discuss. In a nutshell KT not required.", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "UT", "owner": "Soumya", "pm": "Michael", "status": "Not Started", "score": 100, "lwd": "", "pending": "July - Micheal is yet to start customer calls or ticket handling", "risks": "Utah backpack live date is end of May and is at risk", "sw": "No", "shadow": "yes", "rd": "No", "signoff": "No"}, {"area": "MS", "owner": "Anuj", "pm": "Jessica/Caron*", "status": "Not Required", "score": 100, "lwd": "2026-06-12", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "ON", "owner": "", "pm": "Shereen", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MD", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MN", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "ME", "owner": "Alka", "pm": "ShanNita", "status": "Not Required", "score": 80, "lwd": "2026-12-31", "pending": "Ticket handling with India team by Alka", "risks": "Shannita handles all customer intercations", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "IA", "owner": "Ankit", "pm": "Fred/Newhire", "status": "Not Required", "score": 70, "lwd": "2026-12-31", "pending": "Sif Unity, IA current backlog and future commitments", "risks": "Sif Unity yearcoming up.", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "ND", "owner": "Ankit", "pm": "Fred", "status": "Not Required", "score": null, "lwd": "2026-12-31", "pending": "", "risks": "End of support from June -26", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "MT", "owner": "Chintan", "pm": "Michael", "status": "Not Started", "score": 20, "lwd": "2026-12-31", "pending": "Micheal will start from Q3/Q4", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "FL (esp )", "owner": "Himanshu", "pm": "", "status": "Not Started", "score": 0, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NY", "owner": "Himanshu", "pm": "Shereen/NewHire", "status": "Not Started", "score": 0, "lwd": "2026-12-31", "pending": "", "risks": "No plan", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "CA(esp)", "owner": "Rohan (eSP)", "pm": "Prashu", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "Prashu gave this to Rohan few months back and its given back.", "risks": "", "sw": "Done", "shadow": "Done", "rd": "", "signoff": "Done"}, {"area": "MD(esp)", "owner": "Rajesh (eSP)", "pm": "Prashu", "status": "Completed", "score": 100, "lwd": "2026-07-03", "pending": "completed", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": "Done"}, {"area": "NJ(esp)", "owner": "Rajesh (eSP)", "pm": "Prashu", "status": "Completed", "score": 100, "lwd": "2026-07-03", "pending": "Prashu gave this to Rajesh few months back and its now coming back", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": "Done"}, {"area": "NY", "owner": "Rohan", "pm": "Prashu", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "Prashu gave this to Rohan few months back and its given back.", "risks": "", "sw": "Done", "shadow": "Done", "rd": "", "signoff": "Done"}, {"area": "OR", "owner": "Rohan (eSP)", "pm": "Prashu", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "Prashu Already handling OR state since Feb 2026", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "PA", "owner": "Rajesh (eSP)", "pm": "Fred", "status": "Not Required", "score": 100, "lwd": "2026-07-03", "pending": "completed", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": "Done"}, {"area": "CRDC", "owner": "Rohan (eSP)", "pm": "", "status": "Unknown", "score": null, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "IL(esp)", "owner": "Rohan (eSP)", "pm": "New Hire", "status": "Not Started", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MA(esp)", "owner": "Rohan (eSP)", "pm": "", "status": "Unknown", "score": null, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "OH(esp)", "owner": "Rohan (eSP)", "pm": "", "status": "Unknown", "score": null, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "VA(esp)", "owner": "Rohan (eSP)", "pm": "", "status": "Unknown", "score": null, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "WA(esp)", "owner": "Rohan (eSP)", "pm": "", "status": "Not Required", "score": null, "lwd": "2026-12-31", "pending": "Only till June 26", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "LA", "owner": "Sivaprasad", "pm": "Caron*", "status": "Not Started", "score": 50, "lwd": "2026-12-31", "pending": "Everything", "risks": "", "sw": "", "shadow": "No", "rd": "No", "signoff": "No"}, {"area": "WA", "owner": "Sivaprasad", "pm": "Dan*", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "Done", "shadow": "Done", "rd": "Done", "signoff": ""}, {"area": "CO", "owner": "Smitha", "pm": "Jason*", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "Done", "shadow": "Done", "rd": "Done", "signoff": ""}, {"area": "CT", "owner": "Tehzeeb", "pm": "Jessica", "status": "Not Started", "score": 100, "lwd": "", "pending": "Backlog\nRecent development", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "IL", "owner": "Tehzeeb", "pm": "Jessica", "status": "Not Started", "score": 0, "lwd": "", "pending": "Not planned", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "OR", "owner": "Prashu", "pm": "Dan*", "status": "Completed", "score": 100, "lwd": "", "pending": "", "risks": "", "sw": "Done", "shadow": "Done", "rd": "", "signoff": ""}, {"area": "AK", "owner": "Alka", "pm": "Dan*", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "Dan handles all customer intercations", "sw": "Done", "shadow": "Done", "rd": "", "signoff": ""}, {"area": "MI", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NH", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "OH", "owner": "", "pm": "Meta", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "RI", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "WI", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "AZ", "owner": "Prashu", "pm": "Dan*", "status": "Completed", "score": 100, "lwd": "", "pending": "", "risks": "", "sw": "Done", "shadow": "Done", "rd": "", "signoff": ""}, {"area": "IN", "owner": "Himanshu", "pm": "Caron*", "status": "In Process", "score": 100, "lwd": "2026-12-31", "pending": "", "risks": "Caron will start running the calls from Aug.", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NE", "owner": "Chintan", "pm": "Turab/ Caron*", "status": "Not Started", "score": 20, "lwd": "2026-12-31", "pending": "KT not started", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "CA", "owner": "Sivaprasad", "pm": "Jason*", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "Day  to Day Backlog management and sprint planning. Customer Introduction", "risks": "", "sw": "Yes", "shadow": "No", "rd": "No", "signoff": "No"}, {"area": "AL", "owner": "Smitha", "pm": "Debra", "status": "Not Required", "score": 80, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "FL (SIS)", "owner": "Himanshu", "pm": "Debra", "status": "Not Required", "score": null, "lwd": "2026-12-31", "pending": "Closure meeting  with current / pending backlog", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "SC", "owner": "Ajish", "pm": "Vette", "status": "Not Required", "score": 90, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "risks": "", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "TN", "owner": "Ajish", "pm": "Vette", "status": "Not Required", "score": 90, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "risks": "", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "TX", "owner": "Ankit", "pm": "Fred", "status": "Not Required", "score": 80, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "risks": "26-27 Requirements", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "Ed-fi, DEX", "owner": "Soumya", "pm": "Ben", "status": "Continues", "score": null, "lwd": "", "pending": "", "risks": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}];
-var META = {"status_counts": {"USKT": 5, "Not Required": 30, "In Process": 2, "Unknown": 5, "Continues": 4, "Not Started": 11, "Completed": 11}, "avg_scores": {"USKT": 100, "Not Required": 93, "In Process": 100, "Unknown": 100, "Not Started": 45, "Completed": 100}, "owners": ["Ajish", "Alka", "Ankit", "Anuj", "Chhaya", "Chintan", "Himanshu", "NA / Turab", "Prabha", "Prashu", "Rajesh (eSP)", "Rohan", "Rohan (eSP)", "Sivaprasad", "Smitha", "Soumya", "Tehzeeb"], "checklist": [[10, 2, 6], [10, 3, 6], [2, 4, 0], [5, 4, 0]], "owner_rows": {"Ajish": [0, 0, 1, 2, 0, 0, 0], "Alka": [1, 0, 0, 4, 0, 0, 0], "Ankit": [0, 0, 0, 3, 0, 0, 0], "Anuj": [0, 0, 0, 2, 1, 0, 0], "Chhaya": [0, 0, 0, 0, 1, 0, 0], "Chintan": [0, 1, 2, 0, 0, 0, 0], "Himanshu": [0, 1, 2, 1, 0, 0, 0], "NA / Turab": [0, 0, 0, 0, 0, 0, 1], "Prabha": [0, 0, 0, 1, 0, 0, 0], "Prashu": [2, 0, 0, 0, 0, 0, 0], "Rajesh (eSP)": [2, 0, 0, 2, 0, 0, 0], "Rohan": [1, 0, 0, 0, 0, 0, 0], "Rohan (eSP)": [2, 0, 1, 1, 0, 0, 4], "Sivaprasad": [2, 0, 1, 0, 0, 0, 0], "Smitha": [1, 0, 0, 1, 0, 0, 0], "Soumya": [0, 0, 2, 0, 0, 3, 0], "Tehzeeb": [0, 0, 2, 1, 0, 1, 0]}, "all_statuses": ["Completed", "In Process", "Not Started", "Not Required", "USKT", "Continues", "Unknown"], "total": 68, "area_status": {"MA": "USKT", "MI Ed-Fi": "Not Required", "MN Ed-Fi": "USKT", "BC": "Not Required", "AB": "Not Required", "KS": "In Process", "SK": "Not Required", "NJ": "Not Required", "WI Ed-Fi": "USKT", "WY": "Unknown", "GA": "Not Required", "MO": "Not Required", "CEDS": "Continues", "MB": "Not Required", "SIF, SIF Unity": "Continues", "VA": "Not Required", "NM": "USKT", "OK": "USKT", "VT": "Not Started", "PA": "Not Required", "ID": "Not Started", "UDC": "Continues", "TX(esp)": "Not Required", "UT": "Not Started", "MS": "Not Required", "ON": "Not Required", "MD": "Not Required", "MN": "Not Required", "ME": "Not Required", "IA": "Not Required", "ND": "Not Required", "MT": "Not Started", "FL (esp )": "Not Started", "NY": "Not Started", "CA(esp)": "Completed", "MD(esp)": "Completed", "NJ(esp)": "Completed", "OR": "Completed", "CRDC": "Unknown", "IL(esp)": "Not Started", "MA(esp)": "Unknown", "OH(esp)": "Unknown", "VA(esp)": "Unknown", "WA(esp)": "Not Required", "LA": "Not Started", "WA": "Completed", "CO": "Completed", "CT": "Not Started", "IL": "Not Started", "AK": "Completed", "MI": "Not Required", "NH": "Not Required", "OH": "Not Required", "RI": "Not Required", "WI": "Not Required", "AZ": "Completed", "IN": "In Process", "NE": "Not Started", "CA": "Completed", "AL": "Not Required", "FL (SIS)": "Not Required", "SC": "Not Required", "TN": "Not Required", "TX": "Not Required", "Ed-fi, DEX": "Continues"}};
-
-var ALL_STATUSES = ['Completed','In Process','Not Started','Not Required','USKT','Continues','Unknown'];
-var STATUS_COLORS = {'Completed':'#3B6D11','In Process':'#D97706','Not Started':'#DC2626','Not Required':'#2563EB','USKT':'#0D9488','Continues':'#7C3AED','Unknown':'#6B7280'};
-var STATUS_PRI    = {'Not Started':0,'In Process':1,'Unknown':2,'Continues':3,'USKT':4,'Completed':5,'Not Required':6};
-
-// Column definitions — display values for select columns
-var COL_DEFS = [
+var ALL_DATA = [{"area": "MA", "owner": "Chhaya", "pm": "Turab/NewHire", "status": "USKT", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MI Ed-Fi", "owner": "", "pm": "Turab/NewHire", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MN Ed-Fi", "owner": "", "pm": "Turab/NewHire", "status": "USKT", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "BC", "owner": "", "pm": "Shereen", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "AB", "owner": "Tehzeeb", "pm": "Jessica", "status": "Not Required", "score": 80, "lwd": "", "pending": "Conformance , Current backlog, Engineering meetings", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "KS", "owner": "Chintan", "pm": "Jason*", "status": "In Process", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "Yes", "shadow": "Yes", "rd": "", "signoff": ""}, {"area": "SK", "owner": "", "pm": "Shereen", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NJ", "owner": "Alka", "pm": "ShanNita", "status": "Not Required", "score": 80, "lwd": "2026-12-31", "pending": "Ticket handling with India team by Alka", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "WI Ed-Fi", "owner": "", "pm": "Turab/NewHire", "status": "USKT", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "WY", "owner": "NA / Turab", "pm": "Jason*", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "Yes", "shadow": "Yes", "rd": "", "signoff": ""}, {"area": "GA", "owner": "Prabha", "pm": "Vette *", "status": "Not Required", "score": 90, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MO", "owner": "Anuj", "pm": "Jessica / Turab", "status": "Not Required", "score": 100, "lwd": "2026-06-12", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "CEDS", "owner": "Soumya", "pm": "Ben", "status": "Continues", "score": null, "lwd": "", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MB", "owner": "", "pm": "Shereen", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "SIF, SIF Unity", "owner": "Soumya", "pm": "Ben", "status": "Continues", "score": null, "lwd": "", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "VA", "owner": "Alka", "pm": "ShanNita", "status": "Not Required", "score": 80, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NM", "owner": "", "pm": "Eric ->Michael", "status": "USKT", "score": 100, "lwd": "2026-12-31", "pending": "Eric -> Micheal", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "OK", "owner": "Anuj", "pm": "Turab/NewHire", "status": "USKT", "score": 100, "lwd": "2026-06-12", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "VT", "owner": "Ajish", "pm": "Vette/Newhire", "status": "Not Started", "score": 90, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "PA", "owner": "Alka", "pm": "ShanNita", "status": "Not Required", "score": 80, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "ID", "owner": "Soumya", "pm": "Michael", "status": "In Process", "score": 20, "lwd": "", "pending": "All", "sw": "No", "shadow": "No", "rd": "No", "signoff": "No"}, {"area": "UDC", "owner": "Tehzeeb", "pm": "", "status": "Continues", "score": null, "lwd": "", "pending": "Not planned", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "TX(esp)", "owner": "Rajesh (eSP)", "pm": "Fred", "status": "Completed", "score": 100, "lwd": "2026-07-03", "pending": "Had a discussion with Debra! MD will be taken by Prashu and Debra and PA will be taken by Fred. Have a sync up call on 18th May to discuss. In a nutshell KT not required.", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "UT", "owner": "Soumya", "pm": "Michael", "status": "Completed", "score": 100, "lwd": "", "pending": "July - Micheal is yet to start customer calls or ticket handling", "sw": "No", "shadow": "yes", "rd": "No", "signoff": "No"}, {"area": "MS", "owner": "Anuj", "pm": "Jessica/Caron*", "status": "Completed", "score": 100, "lwd": "2026-06-12", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "ON", "owner": "", "pm": "Shereen", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MD", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MN", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "ME", "owner": "Alka", "pm": "ShanNita", "status": "Not Required", "score": 80, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "IA", "owner": "Ankit", "pm": "Fred/Newhire", "status": "Not Required", "score": 70, "lwd": "2026-12-31", "pending": "Sif Unity, IA current backlog and future commitments", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "ND", "owner": "Ankit", "pm": "Fred", "status": "Not Required", "score": null, "lwd": "2026-12-31", "pending": "", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "MT", "owner": "Chintan", "pm": "Michael", "status": "In Process", "score": 20, "lwd": "2026-12-31", "pending": "Micheal will start from Q3/Q4", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "FL (esp )", "owner": "Himanshu", "pm": "", "status": "Not Started", "score": 0, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NY", "owner": "Himanshu", "pm": "Shereen/NewHire", "status": "Not Started", "score": 0, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "CA(esp)", "owner": "Rohan (eSP)", "pm": "Prashu", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "Prashu gave this to Rohan few months back and its given back.", "sw": "Done", "shadow": "Done", "rd": "", "signoff": "Done"}, {"area": "MD(esp)", "owner": "Rajesh (eSP)", "pm": "Prashu", "status": "Completed", "score": 100, "lwd": "2026-07-03", "pending": "completed", "sw": "", "shadow": "", "rd": "", "signoff": "Done"}, {"area": "NJ(esp)", "owner": "Rajesh (eSP)", "pm": "Prashu", "status": "Completed", "score": 100, "lwd": "2026-07-03", "pending": "Prashu gave this to Rajesh few months back and its now coming back", "sw": "", "shadow": "", "rd": "", "signoff": "Done"}, {"area": "NY", "owner": "Rohan (eSP)", "pm": "Prashu", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "Prashu gave this to Rohan few months back and its given back.", "sw": "Done", "shadow": "Done", "rd": "", "signoff": "Done"}, {"area": "OR", "owner": "Rohan (eSP)", "pm": "Prashu", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "Prashu Already handling OR state since Feb 2026", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "PA", "owner": "Rajesh (eSP)", "pm": "Fred", "status": "Not Required", "score": 100, "lwd": "2026-07-03", "pending": "completed", "sw": "", "shadow": "", "rd": "", "signoff": "Done"}, {"area": "CRDC", "owner": "Rohan (eSP)", "pm": "Prashu", "status": "Not Started", "score": 0, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "IL(esp)", "owner": "Rohan (eSP)", "pm": "New Hire", "status": "Not Started", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "MA(esp)", "owner": "Rohan (eSP)", "pm": "", "status": "Unknown", "score": null, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "OH(esp)", "owner": "Rohan (eSP)", "pm": "Prashu", "status": "Not Started", "score": 0, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "VA(esp)", "owner": "Rohan (eSP)", "pm": "Prashu", "status": "Not Started", "score": 0, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "WA(esp)", "owner": "Rohan (eSP)", "pm": "Prashu", "status": "Not Required", "score": 0, "lwd": "2026-12-31", "pending": "Only till June 26", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "LA", "owner": "Sivaprasad", "pm": "Caron*", "status": "In Process", "score": 50, "lwd": "2026-12-31", "pending": "Everything", "sw": "", "shadow": "No", "rd": "No", "signoff": "No"}, {"area": "WA", "owner": "Sivaprasad", "pm": "Dan*", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "Done", "shadow": "Done", "rd": "Done", "signoff": ""}, {"area": "CO", "owner": "Smitha", "pm": "Jason*", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "Done", "shadow": "Done", "rd": "Done", "signoff": ""}, {"area": "CT", "owner": "Tehzeeb", "pm": "Jessica", "status": "Completed", "score": 100, "lwd": "", "pending": "Backlog\nRecent development", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "IL", "owner": "Tehzeeb", "pm": "Jessica", "status": "Not Started", "score": 0, "lwd": "", "pending": "Not planned", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "OR", "owner": "Prashu", "pm": "Dan*", "status": "Completed", "score": 100, "lwd": "", "pending": "", "sw": "Done", "shadow": "Done", "rd": "", "signoff": ""}, {"area": "AK", "owner": "Alka", "pm": "Dan*", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "Done", "shadow": "Done", "rd": "", "signoff": ""}, {"area": "MI", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NH", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "OH", "owner": "", "pm": "Meta", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "RI", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "WI", "owner": "", "pm": "MBA", "status": "Not Required", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "AZ", "owner": "Prashu", "pm": "Dan*", "status": "Completed", "score": 100, "lwd": "", "pending": "", "sw": "Done", "shadow": "Done", "rd": "", "signoff": ""}, {"area": "IN", "owner": "Himanshu", "pm": "Caron*", "status": "In Process", "score": 100, "lwd": "2026-12-31", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "NE", "owner": "Chintan", "pm": "Turab/ Caron*", "status": "Not Started", "score": 0, "lwd": "2026-12-31", "pending": "KT not started", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "CA", "owner": "Sivaprasad", "pm": "Jason*", "status": "Completed", "score": 100, "lwd": "2026-12-31", "pending": "Day  to Day Backlog management and sprint planning. Customer Introduction", "sw": "Yes", "shadow": "No", "rd": "No", "signoff": "No"}, {"area": "AL", "owner": "Smitha", "pm": "Debra", "status": "Not Required", "score": 80, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "FL (SIS)", "owner": "Himanshu", "pm": "Debra", "status": "Not Required", "score": null, "lwd": "2026-12-31", "pending": "Closure meeting  with current / pending backlog", "sw": "", "shadow": "", "rd": "", "signoff": ""}, {"area": "SC", "owner": "Ajish", "pm": "Vette", "status": "Not Required", "score": 90, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "TN", "owner": "Ajish", "pm": "Vette", "status": "Not Required", "score": 90, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "TX", "owner": "Ankit", "pm": "Fred", "status": "Not Required", "score": 80, "lwd": "2026-12-31", "pending": "Current Backlog, \nEngineering meeting scheduling", "sw": "Not required", "shadow": "Not required", "rd": "", "signoff": ""}, {"area": "Ed-fi, DEX", "owner": "Soumya", "pm": "Ben", "status": "Continues", "score": null, "lwd": "", "pending": "", "sw": "", "shadow": "", "rd": "", "signoff": ""}];
+var META = {"status_counts": {"USKT": 5, "Not Required": 28, "In Process": 5, "Completed": 16, "Continues": 4, "Not Started": 9, "Unknown": 1}, "avg_scores": {"USKT": 100, "Not Required": 88, "In Process": 58, "Completed": 100, "Not Started": 21}, "owners": ["Ajish", "Alka", "Ankit", "Anuj", "Chhaya", "Chintan", "Himanshu", "NA / Turab", "Prabha", "Prashu", "Rajesh (eSP)", "Rohan (eSP)", "Sivaprasad", "Smitha", "Soumya", "Tehzeeb"], "checklist": [[10, 2, 6], [10, 3, 6], [2, 4, 0], [5, 4, 0]], "owner_rows": {"Ajish": [0, 0, 1, 2, 0, 0, 0], "Alka": [1, 0, 0, 4, 0, 0, 0], "Ankit": [0, 0, 0, 3, 0, 0, 0], "Anuj": [1, 0, 0, 1, 1, 0, 0], "Chhaya": [0, 0, 0, 0, 1, 0, 0], "Chintan": [0, 2, 1, 0, 0, 0, 0], "Himanshu": [0, 1, 2, 1, 0, 0, 0], "NA / Turab": [1, 0, 0, 0, 0, 0, 0], "Prabha": [0, 0, 0, 1, 0, 0, 0], "Prashu": [2, 0, 0, 0, 0, 0, 0], "Rajesh (eSP)": [3, 0, 0, 1, 0, 0, 0], "Rohan (eSP)": [3, 0, 4, 1, 0, 0, 1], "Sivaprasad": [2, 1, 0, 0, 0, 0, 0], "Smitha": [1, 0, 0, 1, 0, 0, 0], "Soumya": [1, 1, 0, 0, 0, 3, 0], "Tehzeeb": [1, 0, 1, 1, 0, 1, 0]}, "all_statuses": ["Completed", "In Process", "Not Started", "Not Required", "USKT", "Continues", "Unknown"], "total": 68, "area_status": {"MA": "USKT", "MI Ed-Fi": "Not Required", "MN Ed-Fi": "USKT", "BC": "Not Required", "AB": "Not Required", "KS": "In Process", "SK": "Not Required", "NJ": "Not Required", "WI Ed-Fi": "USKT", "WY": "Completed", "GA": "Not Required", "MO": "Not Required", "CEDS": "Continues", "MB": "Not Required", "SIF, SIF Unity": "Continues", "VA": "Not Required", "NM": "USKT", "OK": "USKT", "VT": "Not Started", "PA": "Not Required", "ID": "In Process", "UDC": "Continues", "TX(esp)": "Completed", "UT": "Completed", "MS": "Completed", "ON": "Not Required", "MD": "Not Required", "MN": "Not Required", "ME": "Not Required", "IA": "Not Required", "ND": "Not Required", "MT": "In Process", "FL (esp )": "Not Started", "NY": "Not Started", "CA(esp)": "Completed", "MD(esp)": "Completed", "NJ(esp)": "Completed", "OR": "Completed", "CRDC": "Not Started", "IL(esp)": "Not Started", "MA(esp)": "Unknown", "OH(esp)": "Not Started", "VA(esp)": "Not Started", "WA(esp)": "Not Required", "LA": "In Process", "WA": "Completed", "CO": "Completed", "CT": "Completed", "IL": "Not Started", "AK": "Completed", "MI": "Not Required", "NH": "Not Required", "OH": "Not Required", "RI": "Not Required", "WI": "Not Required", "AZ": "Completed", "IN": "In Process", "NE": "Not Started", "CA": "Completed", "AL": "Not Required", "FL (SIS)": "Not Required", "SC": "Not Required", "TN": "Not Required", "TX": "Not Required", "Ed-fi, DEX": "Continues"}};
+var ALL_STATUSES=['Completed','In Process','Not Started','Not Required','USKT','Continues','Unknown'];
+var STATUS_COLORS={'Completed':'#3B6D11','In Process':'#D97706','Not Started':'#DC2626','Not Required':'#2563EB','USKT':'#0D9488','Continues':'#7C3AED','Unknown':'#6B7280'};
+var STATUS_PRI={'Not Started':0,'In Process':1,'Unknown':2,'Continues':3,'USKT':4,'Completed':5,'Not Required':6};
+var COL_DEFS=[
   {key:'area',    label:'Area',          type:'select'},
   {key:'owner',   label:'India PM',      type:'select'},
   {key:'pm',      label:'Receiving PM',  type:'select'},
   {key:'status',  label:'Status',        type:'select'},
-  {key:'score',   label:'Readiness',     type:'select', displayFn: function(v){ return v===null||v===''?'—':v+'%'; }, rawKey:'score'},
-  {key:'lwd',     label:'Last WD',       type:'select', displayFn: function(v){ return fmtLwd(v); }},
+  {key:'score',   label:'Readiness',     type:'select', displayFn:function(v){return (v===null||v===''||v===undefined)?'—':v+'%';}},
+  {key:'lwd',     label:'Last WD',       type:'select', displayFn:function(v){return fmtLwd(v);}},
   {key:'sw',      label:'SW',            type:'select'},
   {key:'shadow',  label:'Shadow',        type:'select'},
   {key:'signoff', label:'Signoff',       type:'select'},
+  {key:'lwd',     label:'Last Working Day', type:'select', displayFn:function(v){return fmtLwdFull(v);}, id:'lwd2'},
   {key:'pending', label:'Pending/Notes', type:'text'},
 ];
-
-var US_STATES_LIST = ["AK", "AL", "AZ", "CA", "CA(esp)", "CO", "CT", "FL", "FL (SIS)", "FL (esp )", "GA", "IA", "ID", "IL", "IL(esp)", "IN", "KS", "LA", "MA", "MA(esp)", "MD", "MD(esp)", "ME", "MI", "MN", "MO", "MS", "MT", "ND", "NE", "NH", "NJ", "NJ(esp)", "NM", "NY", "OH", "OH(esp)", "OK", "OR", "PA", "RI", "SC", "TN", "TX", "TX(esp)", "UT", "VA", "VA(esp)", "VT", "WA", "WA(esp)", "WI", "WY"];
-var CANADA_LIST    = ["AB", "BC", "MB", "ON", "SK"];
-var SPECIAL_LIST   = ["CEDS", "CRDC", "Ed-fi, DEX", "MI Ed-Fi", "MN Ed-Fi", "SIF, SIF Unity", "UDC", "WI Ed-Fi"];
-
-// ── GLOBAL STATE ──
-var selectedAreas = new Set();
-var activeStatus  = null;
-var colFilters    = {};   // key -> Set of raw string values (select) OR string (text) var openColKey    = null; // currently open column filter key
-
-// ── AREA STATUS MAP ──
-var AREA_STATUS = (function(){
-  var map = {};
-  ALL_DATA.forEach(function(r){
-    if(!r.area) return;
-    if(map[r.area]===undefined || STATUS_PRI[r.status] < STATUS_PRI[map[r.area]])
-      map[r.area] = r.status;
-  });
+var US_STATES_LIST=["AK", "AL", "AZ", "CA", "CA(esp)", "CO", "CT", "FL", "FL (SIS)", "FL (esp )", "GA", "IA", "ID", "IL", "IL(esp)", "IN", "KS", "LA", "MA", "MA(esp)", "MD", "MD(esp)", "ME", "MI", "MN", "MO", "MS", "MT", "ND", "NE", "NH", "NJ", "NJ(esp)", "NM", "NY", "OH", "OH(esp)", "OK", "OR", "PA", "RI", "SC", "TN", "TX", "TX(esp)", "UT", "VA", "VA(esp)", "VT", "WA", "WA(esp)", "WI", "WY"];
+var CANADA_LIST=["AB", "BC", "MB", "ON", "SK"];
+var SPECIAL_LIST=["CEDS", "CRDC", "Ed-fi, DEX", "MI Ed-Fi", "MN Ed-Fi", "SIF, SIF Unity", "UDC", "WI Ed-Fi"];
+var selectedAreas=new Set(),activeStatus=null,colFilters={},openColKey=null;
+var AREA_STATUS=(function(){
+  var map={};
+  ALL_DATA.forEach(function(r){if(!r.area)return;if(map[r.area]===undefined||STATUS_PRI[r.status]<STATUS_PRI[map[r.area]])map[r.area]=r.status;});
   return map;
 })();
-
-// ── DISPLAY HELPERS ──
 function fmtLwd(v){
-  if(!v||v.length<7) return '—';
-  if(v==='2026-12-31') return 'Dec 31';
+  if(!v||v.length<7)return '—';
+  if(v==='2026-12-31')return 'Dec 31';
   return v.slice(5).replace('-','/');
 }
-function scoreColor(s){ return s===null?'#A1A1AA':s>=80?'#3B6D11':s>=50?'#D97706':'#DC2626'; }
+function fmtLwdFull(v){
+  if(!v||v.length<7)return '—';
+  try{
+    var d=new Date(v+'T00:00:00');
+    return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  }catch(e){return v;}
+}
+function lwdClass(v){
+  if(!v||v.length<7)return '';
+  var d=new Date(v+'T00:00:00');
+  var now=new Date();
+  var days=(d-now)/(1000*60*60*24);
+  if(days<=30)return 'lwd-soon';
+  if(days<=90)return 'lwd-mid';
+  return 'lwd-far';
+}
+function scoreColor(s){return s===null?'#A1A1AA':s>=80?'#3B6D11':s>=50?'#D97706':'#DC2626';}
 function dotIcon(v){
-  if(!v) return '<span class="dot-na">—</span>';
+  if(!v)return '<span class="dot-na">—</span>';
   var vl=v.toLowerCase().trim();
-  if(vl==='done'||vl==='yes') return '<span class="dot-yes">&#10003;</span>';
-  if(vl==='no')                return '<span class="dot-no">&#10007;</span>';
-  if(vl.includes('not required')) return '<span class="dot-nr">N/R</span>';
+  if(vl==='done'||vl==='yes')return '<span class="dot-yes">&#10003;</span>';
+  if(vl==='no')return '<span class="dot-no">&#10007;</span>';
+  if(vl.includes('not required'))return '<span class="dot-nr">N/R</span>';
   return '<span class="dot-na">—</span>';
 }
-function bclass(s){ return 'badge b-'+s.replace(/ /g,'-'); }
-function abCls(s)  { return 'ab-'+(s||'Unknown').replace(/ /g,'-'); }
-
-// ── GET UNIQUE VALUES for a column (raw values from data) ──
+function bclass(s){return 'badge b-'+s.replace(/ /g,'-');}
+function abCls(s){return 'ab-'+(s||'Unknown').replace(/ /g,'-');}
 function getUniqVals(colDef){
-  var seen = {};
+  var seen={};
   ALL_DATA.forEach(function(r){
-    var raw = r[colDef.key];
-    var display = colDef.displayFn ? colDef.displayFn(raw) : String(raw===null||raw===undefined?'':raw);
-    var key = String(raw===null||raw===undefined?'':raw); // store raw as key
-    if(key!=='' || display!=='—') seen[key] = display;
+    var raw=r[colDef.key];
+    var rawStr=String(raw===null||raw===undefined?'':raw);
+    var display=colDef.displayFn?colDef.displayFn(raw===''?null:(isNaN(raw)||raw===''?raw:Number(raw))):rawStr;
+    seen[rawStr]=display;
   });
-  // Sort by display value
-  var pairs = Object.keys(seen).map(function(k){ return {raw:k, display:seen[k]}; });
-  pairs.sort(function(a,b){ return a.display.localeCompare(b.display); });
+  var pairs=Object.keys(seen).map(function(k){return{raw:k,display:seen[k]};});
+  pairs.sort(function(a,b){return a.display.localeCompare(b.display);});
   return pairs;
 }
-
-// ── PORTAL DROPDOWN ──
-var portalEl      = document.getElementById('cfPortal');
-var portalContent = document.getElementById('cfPortalContent');
-
-function openPortal(colDef, btnEl){
-  // Close if same column re-clicked
-  if(openColKey === colDef.key){ closePortal(); return; }
-  openColKey = colDef.key;
+var portalEl=document.getElementById('cfPortal');
+var portalContent=document.getElementById('cfPortalContent');
+function openPortal(colDef,btnEl){
+  var effectiveKey=colDef.id||colDef.key;
+  if(openColKey===effectiveKey){closePortal();return;}
+  openColKey=effectiveKey;
   updateFilterBtnStyles();
-
-  var type = colDef.type;
-  portalContent.innerHTML = '';
-
-  if(type === 'select'){
-    var pairs = getUniqVals(colDef);
-    var curSet = colFilters[colDef.key] instanceof Set ? colFilters[colDef.key] : new Set();
-
-    // Search input
-    var srch = document.createElement('input');
-    srch.className='cf-search'; srch.placeholder='Search…';
-    srch.addEventListener('mousedown', function(e){ e.stopPropagation(); });
-    srch.addEventListener('input', function(){
+  portalContent.innerHTML='';
+  if(colDef.type==='select'){
+    var pairs=getUniqVals(colDef);
+    var curSet=colFilters[effectiveKey] instanceof Set?colFilters[effectiveKey]:new Set();
+    var srch=document.createElement('input');srch.className='cf-search';srch.placeholder='Search…';
+    srch.addEventListener('mousedown',function(e){e.stopPropagation();});
+    srch.addEventListener('input',function(){
       var q=srch.value.toLowerCase();
-      portalContent.querySelectorAll('.cf-opt').forEach(function(o){
-        o.style.display = o.dataset.display.toLowerCase().includes(q) ? '' : 'none';
-      });
+      portalContent.querySelectorAll('.cf-opt').forEach(function(o){o.style.display=o.dataset.display.toLowerCase().includes(q)?'':'none';});
     });
     portalContent.appendChild(srch);
-
-    // Options
-    var ow = document.createElement('div'); ow.className='cf-opts';
+    var ow=document.createElement('div');ow.className='cf-opts';
     pairs.forEach(function(p){
-      var div=document.createElement('div'); div.className='cf-opt';
-      div.dataset.raw=p.raw; div.dataset.display=p.display;
-      var cb=document.createElement('input'); cb.type='checkbox';
-      cb.checked = curSet.has(p.raw);
-      var lbl=document.createElement('label'); lbl.textContent=p.display||'(blank)';
-      div.appendChild(cb); div.appendChild(lbl);
-      div.addEventListener('mousedown', function(e){
-        e.preventDefault(); e.stopPropagation();
-        cb.checked = !cb.checked;
-      });
+      var div=document.createElement('div');div.className='cf-opt';div.dataset.raw=p.raw;div.dataset.display=p.display;
+      var cb=document.createElement('input');cb.type='checkbox';cb.checked=curSet.has(p.raw);
+      var lbl=document.createElement('label');lbl.textContent=p.display||'(blank)';
+      div.appendChild(cb);div.appendChild(lbl);
+      div.addEventListener('mousedown',function(e){e.preventDefault();e.stopPropagation();cb.checked=!cb.checked;});
       ow.appendChild(div);
     });
     portalContent.appendChild(ow);
-
-    // Footer
-    var ft=document.createElement('div'); ft.className='cf-foot';
-    var clr=document.createElement('button'); clr.className='cf-clear-col'; clr.textContent='Clear';
-    clr.addEventListener('mousedown',function(e){
-      e.preventDefault(); e.stopPropagation();
-      delete colFilters[colDef.key];
-      closePortal(); refresh();
-    });
-    var ap=document.createElement('button'); ap.className='cf-apply'; ap.textContent='Apply';
+    var ft=document.createElement('div');ft.className='cf-foot';
+    var clr=document.createElement('button');clr.className='cf-clear-col';clr.textContent='Clear';
+    clr.addEventListener('mousedown',function(e){e.preventDefault();e.stopPropagation();delete colFilters[effectiveKey];closePortal();refresh();});
+    var ap=document.createElement('button');ap.className='cf-apply';ap.textContent='Apply';
     ap.addEventListener('mousedown',function(e){
-      e.preventDefault(); e.stopPropagation();
-      var checked=Array.from(portalContent.querySelectorAll('.cf-opt input:checked'))
-        .map(function(c){ return c.closest('.cf-opt').dataset.raw; });
-      if(checked.length) colFilters[colDef.key]=new Set(checked);
-      else delete colFilters[colDef.key];
-      closePortal(); refresh();
+      e.preventDefault();e.stopPropagation();
+      var chk=Array.from(portalContent.querySelectorAll('.cf-opt input:checked')).map(function(c){return c.closest('.cf-opt').dataset.raw;});
+      if(chk.length)colFilters[effectiveKey]=new Set(chk);else delete colFilters[effectiveKey];
+      closePortal();refresh();
     });
-    ft.appendChild(clr); ft.appendChild(ap);
-    portalContent.appendChild(ft);
-    setTimeout(function(){ srch.focus(); }, 30);
-
+    ft.appendChild(clr);ft.appendChild(ap);portalContent.appendChild(ft);
+    setTimeout(function(){srch.focus();},30);
   } else {
-    // Text search
-    var cur = typeof colFilters[colDef.key]==='string' ? colFilters[colDef.key] : '';
-    var ti=document.createElement('input'); ti.className='cf-search';
-    ti.placeholder='Type to search…'; ti.value=cur; ti.style.borderBottom='none';
-    ti.addEventListener('mousedown',function(e){ e.stopPropagation(); });
-    ti.addEventListener('keydown',function(e){
-      if(e.key==='Enter'){ applyTextFilter(colDef.key, ti.value); }
-    });
+    var cur=typeof colFilters[effectiveKey]==='string'?colFilters[effectiveKey]:'';
+    var ti=document.createElement('input');ti.className='cf-search';ti.placeholder='Type to search…';ti.value=cur;ti.style.borderBottom='none';
+    ti.addEventListener('mousedown',function(e){e.stopPropagation();});
+    ti.addEventListener('keydown',function(e){if(e.key==='Enter')applyTextFilter(effectiveKey,ti.value);});
     portalContent.appendChild(ti);
-    var ft2=document.createElement('div'); ft2.className='cf-foot';
-    var clr2=document.createElement('button'); clr2.className='cf-clear-col'; clr2.textContent='Clear';
-    clr2.addEventListener('mousedown',function(e){
-      e.preventDefault(); e.stopPropagation();
-      delete colFilters[colDef.key]; closePortal(); refresh();
-    });
-    var ap2=document.createElement('button'); ap2.className='cf-apply'; ap2.textContent='Apply';
-    ap2.addEventListener('mousedown',function(e){
-      e.preventDefault(); e.stopPropagation();
-      applyTextFilter(colDef.key, ti.value);
-    });
-    ft2.appendChild(clr2); ft2.appendChild(ap2);
-    portalContent.appendChild(ft2);
-    setTimeout(function(){ ti.focus(); }, 30);
+    var ft2=document.createElement('div');ft2.className='cf-foot';
+    var clr2=document.createElement('button');clr2.className='cf-clear-col';clr2.textContent='Clear';
+    clr2.addEventListener('mousedown',function(e){e.preventDefault();e.stopPropagation();delete colFilters[effectiveKey];closePortal();refresh();});
+    var ap2=document.createElement('button');ap2.className='cf-apply';ap2.textContent='Apply';
+    ap2.addEventListener('mousedown',function(e){e.preventDefault();e.stopPropagation();applyTextFilter(effectiveKey,ti.value);});
+    ft2.appendChild(clr2);ft2.appendChild(ap2);portalContent.appendChild(ft2);
+    setTimeout(function(){ti.focus();},30);
   }
-
-  // Position portal below the button
   positionPortal(btnEl);
   portalEl.classList.add('open');
 }
-
 function positionPortal(btnEl){
-  var rect = btnEl.getBoundingClientRect();
-  var pW = 220;
-  var left = rect.left;
-  if(left + pW > window.innerWidth - 8) left = window.innerWidth - pW - 8;
-  portalEl.style.top  = (rect.bottom + 4) + 'px';
-  portalEl.style.left = left + 'px';
-  portalEl.style.width = pW + 'px';
+  var rect=btnEl.getBoundingClientRect();
+  var pW=220;
+  var left=rect.left;
+  if(left+pW>window.innerWidth-8)left=window.innerWidth-pW-8;
+  portalEl.style.top=(rect.bottom+4)+'px';
+  portalEl.style.left=left+'px';
+  portalEl.style.width=pW+'px';
 }
-
-function closePortal(){
-  portalEl.classList.remove('open');
-  openColKey = null;
-  updateFilterBtnStyles();
-}
-
-function applyTextFilter(key, val){
-  if(val.trim()) colFilters[key]=val.trim(); else delete colFilters[key];
-  closePortal(); refresh();
-}
-
-// Close portal on outside click
-document.addEventListener('mousedown', function(e){
-  if(openColKey && !portalEl.contains(e.target)){
-    var btn = document.getElementById('cfbtn-'+openColKey);
-    if(btn && btn.contains(e.target)) return; // handled by button click
+function closePortal(){portalEl.classList.remove('open');openColKey=null;updateFilterBtnStyles();}
+function applyTextFilter(key,val){if(val.trim())colFilters[key]=val.trim();else delete colFilters[key];closePortal();refresh();}
+document.addEventListener('mousedown',function(e){
+  if(openColKey&&!portalEl.contains(e.target)){
+    var btn=document.getElementById('cfbtn-'+(openColKey));
+    if(btn&&btn.contains(e.target))return;
     closePortal();
   }
 });
-window.addEventListener('scroll', closePortal, true);
-window.addEventListener('resize', function(){ if(openColKey) closePortal(); });
+window.addEventListener('scroll',closePortal,true);
+window.addEventListener('resize',function(){if(openColKey)closePortal();});
+var sortKey  = null;
+var sortDir  = 'asc'; // 'asc' | 'desc'
 
-// ── BUILD THEAD ONCE ──
 function buildThead(){
-  var tr=document.getElementById('theadRow');
-  tr.innerHTML='';
+  var tr=document.getElementById('theadRow');tr.innerHTML='';
   COL_DEFS.forEach(function(col){
+    var effectiveKey=col.id||col.key;
     var th=document.createElement('th');
-    var wrap=document.createElement('div'); wrap.className='th-wrap';
-    var lbl=document.createElement('span'); lbl.className='th-label'; lbl.textContent=col.label;
+    th.id='th-'+effectiveKey;
+
+    var wrap=document.createElement('div');wrap.className='th-wrap';
+
+    var lbl=document.createElement('span');lbl.className='th-label';lbl.textContent=col.label;
+
+    // sort icon
+    var si=document.createElement('span');si.className='sort-icon none';si.id='si-'+effectiveKey;
+
     var btn=document.createElement('button');
-    btn.className='cf-btn'; btn.id='cfbtn-'+col.key;
-    btn.innerHTML='&#9660;';
-    btn.title='Filter '+col.label;
-    btn.addEventListener('click',function(e){
-      e.stopPropagation();
-      openPortal(col, btn);
-    });
-    wrap.appendChild(lbl); wrap.appendChild(btn);
+    btn.className='cf-btn';btn.id='cfbtn-'+effectiveKey;btn.innerHTML='&#9660;';btn.title='Filter '+col.label;
+    btn.addEventListener('click',function(e){e.stopPropagation();openPortal(col,btn);});
+
+    wrap.appendChild(lbl);
+    wrap.appendChild(si);
+    wrap.appendChild(btn);
     th.appendChild(wrap);
     tr.appendChild(th);
+
+    // click on th-wrap (but not the filter btn) = sort
+    wrap.addEventListener('click',function(e){
+      if(e.target===btn||btn.contains(e.target)) return;
+      onSortClick(col);
+    });
+  });
+  updateSortIcons();
+}
+
+function onSortClick(col){
+  var effectiveKey = col.id||col.key;
+  if(sortKey===effectiveKey){
+    sortDir = sortDir==='asc'?'desc':'asc';
+  } else {
+    sortKey = effectiveKey;
+    sortDir = 'asc';
+  }
+  updateSortIcons();
+  renderTable(getFiltered());
+}
+
+function updateSortIcons(){
+  COL_DEFS.forEach(function(col){
+    var ek=col.id||col.key;
+    var si=document.getElementById('si-'+ek);
+    var th=document.getElementById('th-'+ek);
+    if(!si) return;
+    si.className='sort-icon';
+    if(th) th.classList.remove('sorted-asc','sorted-desc');
+    if(sortKey===ek){
+      si.classList.add(sortDir);
+      if(th) th.classList.add('sorted-'+sortDir);
+    } else {
+      si.classList.add('none');
+    }
   });
 }
 
+function sortData(data){
+  if(!sortKey) return data;
+  var col=COL_DEFS.find(function(c){return (c.id||c.key)===sortKey;});
+  var dataKey=col?col.key:sortKey;
+  return data.slice().sort(function(a,b){
+    var av=a[dataKey], bv=b[dataKey];
+    // nulls last
+    if(av===null||av===undefined||av==='') return 1;
+    if(bv===null||bv===undefined||bv==='') return -1;
+    // numeric
+    if(typeof av==='number'&&typeof bv==='number') return sortDir==='asc'?av-bv:bv-av;
+    // date strings
+    if(dataKey==='lwd') return sortDir==='asc'?String(av).localeCompare(String(bv)):String(bv).localeCompare(String(av));
+    // string
+    var as=String(av).toLowerCase(), bs=String(bv).toLowerCase();
+    return sortDir==='asc'?as.localeCompare(bs):bs.localeCompare(as);
+  });
+}
 function updateFilterBtnStyles(){
   COL_DEFS.forEach(function(col){
-    var btn=document.getElementById('cfbtn-'+col.key);
-    if(!btn) return;
-    var hasF = colFilters[col.key] &&
-      ((colFilters[col.key] instanceof Set && colFilters[col.key].size>0) ||
-       (typeof colFilters[col.key]==='string' && colFilters[col.key].trim()));
-    btn.classList.toggle('active-filter', !!hasF);
-    btn.innerHTML = hasF ? '&#9660;&#9679;' : '&#9660;';
+    var effectiveKey=col.id||col.key;
+    var btn=document.getElementById('cfbtn-'+effectiveKey);if(!btn)return;
+    var hasF=colFilters[effectiveKey]&&((colFilters[effectiveKey] instanceof Set&&colFilters[effectiveKey].size>0)||(typeof colFilters[effectiveKey]==='string'&&colFilters[effectiveKey].trim()));
+    btn.classList.toggle('active-filter',!!hasF);
+    btn.innerHTML=hasF?'&#9660;&#9679;':'&#9660;';
   });
 }
-
-// ── FILTERING ──
 function getFiltered(){
   return ALL_DATA.filter(function(r){
-    if(selectedAreas.size>0 && !selectedAreas.has(r.area)) return false;
-    if(activeStatus && r.status!==activeStatus) return false;
+    if(selectedAreas.size>0&&!selectedAreas.has(r.area))return false;
+    if(activeStatus&&r.status!==activeStatus)return false;
     for(var k in colFilters){
       var fv=colFilters[k];
-      if(!fv||(fv instanceof Set&&fv.size===0)) continue;
-      // raw value from data
-      var rawVal = r[k];
-      var rawStr = String(rawVal===null||rawVal===undefined?'':rawVal);
-      if(fv instanceof Set){
-        // Compare raw stored value against Set of raw values
-        if(!fv.has(rawStr)) return false;
-      } else if(typeof fv==='string'&&fv.trim()){
-        if(!rawStr.toLowerCase().includes(fv.trim().toLowerCase())) return false;
-      }
+      if(!fv||(fv instanceof Set&&fv.size===0))continue;
+      // find which colDef uses this key
+      var cd=COL_DEFS.find(function(c){return (c.id||c.key)===k;});
+      var rawVal=cd?r[cd.key]:r[k];
+      var rawStr=String(rawVal===null||rawVal===undefined?'':rawVal);
+      if(fv instanceof Set){if(!fv.has(rawStr))return false;}
+      else if(typeof fv==='string'&&fv.trim()){if(!rawStr.toLowerCase().includes(fv.trim().toLowerCase()))return false;}
     }
     return true;
   });
 }
-
-// ── RENDER TABLE ──
 function renderTable(data){
+  data=sortData(data);
   var tbody=document.getElementById('tableBody');
   var empty=document.getElementById('emptyState');
   var count=document.getElementById('rowCount');
@@ -497,11 +497,12 @@ function renderTable(data){
   if(!data.length){empty.style.display='block';return;}
   empty.style.display='none';
   data.forEach(function(r){
-    var sc=r.score; var col=scoreColor(sc);
+    var sc=r.score;var col=scoreColor(sc);
     var sf=sc!==null
       ?'<div class="score-wrap"><div class="score-bar"><div class="score-fill" style="width:'+Math.min(sc,100)+'%;background:'+col+'"></div></div><span class="score-num" style="color:'+col+'">'+sc+'%</span></div>'
       :'<span class="dot-na">—</span>';
     var pending=(r.pending||'').replace(/\n/g,' ');
+    var lwdDisplay=r.lwd?('<span class="lwd-pill '+lwdClass(r.lwd)+'">'+fmtLwdFull(r.lwd)+'</span>'):'<span class="lwd-na">—</span>';
     var tr=document.createElement('tr');
     tr.innerHTML=
       '<td style="font-weight:600">'+r.area+'</td>'+
@@ -513,12 +514,11 @@ function renderTable(data){
       '<td style="text-align:center">'+dotIcon(r.sw)+'</td>'+
       '<td style="text-align:center">'+dotIcon(r.shadow)+'</td>'+
       '<td style="text-align:center">'+dotIcon(r.signoff)+'</td>'+
-      '<td style="color:var(--text2)" title="'+pending.replace(/"/g,"&quot;")+'">'+( pending||'—')+'</td>';
+      '<td>'+lwdDisplay+'</td>'+
+      '<td style="color:var(--text2)" title="'+pending.replace(/"/g,'&quot;')+'">'+( pending||'—')+'</td>';
     tbody.appendChild(tr);
   });
 }
-
-// ── RENDER CHIPS ──
 function renderChips(){
   var left=document.getElementById('toolbarLeft');
   left.querySelectorAll('.col-chip').forEach(function(c){c.remove();});
@@ -526,71 +526,47 @@ function renderChips(){
     var chip=document.createElement('span');chip.className='col-chip';
     var desc=selectedAreas.size===1?Array.from(selectedAreas)[0]:selectedAreas.size+' areas';
     chip.innerHTML='Area: <strong>'+desc+'</strong>';
-    var rm=document.createElement('button');rm.innerHTML='&times;';rm.onclick=clearAreaFilter;
-    chip.appendChild(rm);left.appendChild(chip);
+    var rm=document.createElement('button');rm.innerHTML='&times;';rm.onclick=clearAreaFilter;chip.appendChild(rm);left.appendChild(chip);
   }
-  Object.keys(colFilters).forEach(function(key){
-    var fv=colFilters[key];
-    var cd=COL_DEFS.find(function(c){return c.key===key;})||{label:key};
+  Object.keys(colFilters).forEach(function(k){
+    var fv=colFilters[k];
+    var cd=COL_DEFS.find(function(c){return (c.id||c.key)===k;})||{label:k};
     var desc;
     if(fv instanceof Set){
-      // show display values not raw
-      var colDef=COL_DEFS.find(function(c){return c.key===key;});
       desc=Array.from(fv).map(function(raw){
-        return colDef&&colDef.displayFn?colDef.displayFn(raw===''?null:isNaN(raw)?raw:Number(raw)):raw||'(blank)';
+        return cd.displayFn?cd.displayFn(raw===''?null:(isNaN(raw)||raw===''?raw:Number(raw))):raw||'(blank)';
       }).join(', ');
-    } else { desc=fv; }
+    } else {desc=fv;}
     var chip=document.createElement('span');chip.className='col-chip';
     chip.innerHTML=cd.label+': <strong>'+desc+'</strong>';
     var rm=document.createElement('button');rm.innerHTML='&times;';
-    rm.addEventListener('click',function(){delete colFilters[key];refresh();});
-    chip.appendChild(rm);left.appendChild(chip);
+    rm.addEventListener('click',function(){delete colFilters[k];refresh();});chip.appendChild(rm);left.appendChild(chip);
   });
 }
-
-function refresh(){
-  updateFilterBtnStyles();
-  renderChips();
-  renderTable(getFiltered());
-}
-
-// ── STATUS FILTER ──
+function refresh(){updateFilterBtnStyles();renderChips();renderTable(getFiltered());}
 function applyStatusFilter(status){
   activeStatus=status;
   document.getElementById('statusChipLabel').textContent=status;
   document.getElementById('statusChip').style.display='inline-flex';
-  document.querySelectorAll('.stat-card').forEach(function(c){
-    c.classList.toggle('active',c.dataset.s===status);
-    c.style.opacity=c.dataset.s===status?'1':'0.5';
-  });
+  document.querySelectorAll('.stat-card').forEach(function(c){c.classList.toggle('active',c.dataset.s===status);c.style.opacity=c.dataset.s===status?'1':'0.5';});
   donutChart.data.datasets[0].offset=ALL_STATUSES.map(function(s){return s===status?16:0;});
-  donutChart.update();
-  refresh();
+  donutChart.update();refresh();
   document.querySelector('.table-card').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 function clearStatusFilter(){
-  activeStatus=null;
-  document.getElementById('statusChip').style.display='none';
+  activeStatus=null;document.getElementById('statusChip').style.display='none';
   document.querySelectorAll('.stat-card').forEach(function(c){c.classList.remove('active');c.style.opacity='1';});
-  donutChart.data.datasets[0].offset=new Array(ALL_STATUSES.length).fill(0);
-  donutChart.update();refresh();
+  donutChart.data.datasets[0].offset=new Array(ALL_STATUSES.length).fill(0);donutChart.update();refresh();
 }
 function clearAll(){
-  selectedAreas.clear();activeStatus=null;colFilters={};
-  syncAreaBtns();
+  selectedAreas.clear();activeStatus=null;colFilters={};syncAreaBtns();
   document.getElementById('statusChip').style.display='none';
   document.querySelectorAll('.stat-card').forEach(function(c){c.classList.remove('active');c.style.opacity='1';});
-  donutChart.data.datasets[0].offset=new Array(ALL_STATUSES.length).fill(0);
-  donutChart.update();refresh();
+  donutChart.data.datasets[0].offset=new Array(ALL_STATUSES.length).fill(0);donutChart.update();refresh();
 }
 document.querySelectorAll('.stat-card').forEach(function(card){
-  card.addEventListener('click',function(){
-    var s=card.dataset.s;
-    if(activeStatus===s)clearStatusFilter();else applyStatusFilter(s);
-  });
+  card.addEventListener('click',function(){var s=card.dataset.s;if(activeStatus===s)clearStatusFilter();else applyStatusFilter(s);});
 });
-
-// ── AREA BAR ──
 function buildAreaBar(){
   var inner=document.getElementById('areaBarInner');inner.innerHTML='';
   var r0=document.createElement('div');r0.className='area-group-row';
@@ -606,17 +582,13 @@ function buildAreaBar(){
     var w=document.createElement('div');w.className='area-btns';
     if(multi){var h=document.createElement('span');h.className='multi-hint';h.textContent='(multi-select)';w.appendChild(h);}
     pres.forEach(function(a){
-      var btn=document.createElement('button');
-      btn.className='area-btn '+abCls(AREA_STATUS[a]);
-      btn.dataset.area=a;btn.textContent=a;
-      btn.title=(multi?'Multi: ':'Filter: ')+a+' — '+AREA_STATUS[a];
+      var btn=document.createElement('button');btn.className='area-btn '+abCls(AREA_STATUS[a]);
+      btn.dataset.area=a;btn.textContent=a;btn.title=(multi?'Multi: ':'Filter: ')+a+' — '+AREA_STATUS[a];
       btn.onclick=function(){onAreaClick(a,multi);};w.appendChild(btn);
     });
     row.appendChild(w);inner.appendChild(row);
   }
-  mkGrp('US States',US_STATES_LIST,true);
-  mkGrp('Canada',CANADA_LIST,false);
-  mkGrp('Special',SPECIAL_LIST,false);
+  mkGrp('US States',US_STATES_LIST,true);mkGrp('Canada',CANADA_LIST,false);mkGrp('Special',SPECIAL_LIST,false);
   var known=US_STATES_LIST.concat(CANADA_LIST).concat(SPECIAL_LIST);
   var other=Object.keys(AREA_STATUS).filter(function(a){return known.indexOf(a)===-1;}).sort();
   if(other.length)mkGrp('Other',other,false);
@@ -634,35 +606,18 @@ function syncAreaBtns(){
   var cb=document.getElementById('areaClearBtn');if(cb)cb.classList.toggle('show',has);
   document.querySelectorAll('.area-btn[data-area]').forEach(function(b){b.classList.toggle('active',selectedAreas.has(b.dataset.area));});
 }
-
-// ── CHARTS ──
 (function(){
   var lg=document.getElementById('donutLegend');
-  ALL_STATUSES.forEach(function(s){
-    var d=document.createElement('div');d.className='ld';
-    d.innerHTML='<span style="background:'+STATUS_COLORS[s]+'"></span>'+s+' ('+(META.status_counts[s]||0)+')';
-    lg.appendChild(d);
-  });
+  ALL_STATUSES.forEach(function(s){var d=document.createElement('div');d.className='ld';d.innerHTML='<span style="background:'+STATUS_COLORS[s]+'"></span>'+s+' ('+(META.status_counts[s]||0)+')';lg.appendChild(d);});
 })();
-var donutChart=new Chart(document.getElementById('donutChart'),{
-  type:'doughnut',
-  data:{labels:ALL_STATUSES,datasets:[{data:ALL_STATUSES.map(function(s){return META.status_counts[s]||0;}),backgroundColor:ALL_STATUSES.map(function(s){return STATUS_COLORS[s];}),borderWidth:3,borderColor:'#fff',hoverOffset:10,offset:new Array(ALL_STATUSES.length).fill(0)}]},
-  options:{responsive:true,maintainAspectRatio:false,cutout:'62%',
-    plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return '  '+ctx.label+': '+ctx.raw;}}}},
-    onClick:function(evt,els){if(!els.length){clearStatusFilter();return;}var lbl=ALL_STATUSES[els[0].index];if(activeStatus===lbl)clearStatusFilter();else applyStatusFilter(lbl);},
-    onHover:function(evt,els){evt.native.target.style.cursor=els.length?'pointer':'default';}}
-});
+var donutChart=new Chart(document.getElementById('donutChart'),{type:'doughnut',data:{labels:ALL_STATUSES,datasets:[{data:ALL_STATUSES.map(function(s){return META.status_counts[s]||0;}),backgroundColor:ALL_STATUSES.map(function(s){return STATUS_COLORS[s];}),borderWidth:3,borderColor:'#fff',hoverOffset:10,offset:new Array(ALL_STATUSES.length).fill(0)}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return '  '+ctx.label+': '+ctx.raw;}}}},onClick:function(evt,els){if(!els.length){clearStatusFilter();return;}var lbl=ALL_STATUSES[els[0].index];if(activeStatus===lbl)clearStatusFilter();else applyStatusFilter(lbl);},onHover:function(evt,els){evt.native.target.style.cursor=els.length?'pointer':'default';}}});
 var rL=[],rV=[],rC=[];ALL_STATUSES.forEach(function(s){if(META.avg_scores[s]!==undefined){rL.push(s);rV.push(META.avg_scores[s]);rC.push(STATUS_COLORS[s]);}});
 new Chart(document.getElementById('readinessChart'),{type:'bar',data:{labels:rL,datasets:[{data:rV,backgroundColor:rC,borderRadius:6,barThickness:26}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return ' '+c.raw+'%';}}}},scales:{x:{min:0,max:110,ticks:{callback:function(v){return v+'%';},font:{size:11},color:'#A1A1AA'},grid:{color:'rgba(0,0,0,0.05)'}},y:{ticks:{font:{size:12},color:'#52525B'},grid:{display:false}}}}});
 var CL=META.checklist;
 new Chart(document.getElementById('checklistChart'),{type:'bar',data:{labels:['State Walkthrough','Shadowing','Reverse Demo','Receiver Signoff'],datasets:[{label:'Done/Yes',data:CL.map(function(c){return c[0];}),backgroundColor:'#3B6D11',borderRadius:4,barThickness:20},{label:'No/Pending',data:CL.map(function(c){return c[1];}),backgroundColor:'#DC2626',borderRadius:4,barThickness:20},{label:'Not required',data:CL.map(function(c){return c[2];}),backgroundColor:'#A1A1AA',borderRadius:4,barThickness:20}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:10},color:'#A1A1AA',maxRotation:10},grid:{display:false}},y:{ticks:{font:{size:11},color:'#A1A1AA'},grid:{color:'rgba(0,0,0,0.05)'}}}}});
 var owners=META.owners;
 new Chart(document.getElementById('ownerChart'),{type:'bar',data:{labels:owners,datasets:ALL_STATUSES.map(function(s){return{label:s,data:owners.map(function(o){return(META.owner_rows[o]||[])[META.all_statuses.indexOf(s)]||0;}),backgroundColor:STATUS_COLORS[s],borderRadius:3,barThickness:12};})},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{stacked:true,ticks:{font:{size:9},color:'#A1A1AA',maxRotation:40},grid:{display:false}},y:{stacked:true,ticks:{font:{size:10},color:'#A1A1AA'},grid:{color:'rgba(0,0,0,0.05)'}}}}});
-
-// ── BOOT ──
-buildAreaBar();
-buildThead();   // build once, never rebuild
-refresh();
+buildAreaBar();buildThead();refresh();
 </script>
 </body>
 </html>
